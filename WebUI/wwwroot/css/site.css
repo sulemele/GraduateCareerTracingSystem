@@ -29,3 +29,51 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/*NEW*/
+/* Programme Management Specific Styles */
+.programme-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+}
+
+    .programme-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+
+.truncate-2-lines {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* SweetAlert2 Customizations */
+.swal2-popup {
+    border-radius: 0.75rem !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+.swal2-title {
+    font-family: 'Source Sans Pro', sans-serif !important;
+    font-weight: 600 !important;
+}
+
+/* Loading animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}

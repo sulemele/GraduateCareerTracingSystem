@@ -1,4 +1,654 @@
 ﻿<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Graduate Career Tracing Solution</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons (Free) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <!-- Font Awesome 6 Free -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- DataTables CSS (Optional) -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+
+    <!-- Select2 CSS (Optional) -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico">
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #1abc9c;
+            --light-color: #f8f9fa;
+            --dark-color: #2c3e50;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --sidebar-width: 260px;
+            --header-height: 70px;
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: #333;
+            font-weight: 400;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 600;
+        }
+
+        /* Header Styles */
+        .main-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1a2530 100%);
+            height: var(--header-height);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1030;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .brand-icon {
+            color: var(--accent-color);
+            margin-right: 10px;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.85) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white !important;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 6px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            height: calc(100vh - var(--header-height));
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            overflow-y: auto;
+            z-index: 1020;
+        }
+
+        .sidebar.collapsed {
+            margin-left: calc(-1 * var(--sidebar-width));
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu-item {
+            margin-bottom: 2px;
+        }
+
+        .sidebar-menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.5rem;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar-menu-link:hover {
+            background-color: rgba(52, 152, 219, 0.08);
+            color: var(--secondary-color);
+            border-left-color: var(--secondary-color);
+        }
+
+        .sidebar-menu-link.active {
+            background-color: rgba(52, 152, 219, 0.12);
+            color: var(--secondary-color);
+            border-left-color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .sidebar-menu-icon {
+            width: 24px;
+            margin-right: 12px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            transition: all 0.3s;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        /* Card Styles */
+        .card {
+            border: none;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #e3e6f0;
+            padding: 1rem 1.35rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            border-radius: 0.5rem 0.5rem 0 0 !important;
+        }
+
+        /* Footer */
+        .main-footer {
+            background-color: white;
+            border-top: 1px solid #e3e6f0;
+            padding: 1.5rem 0;
+            margin-top: auto;
+            color: #6c757d;
+        }
+
+        /* Dashboard Stats Cards */
+        .stat-card {
+            border-radius: 10px;
+            color: white;
+            padding: 1.5rem;
+            height: 100%;
+        }
+
+        .stat-card-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+        }
+
+        .stat-card-success {
+            background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+        }
+
+        .stat-card-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+
+        .stat-card-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        /* Responsive Adjustments */
+        @@media (max-width: 992px) {
+            .sidebar {
+                margin-left: calc(-1 * var(--sidebar-width));
+            }
+
+            .sidebar.mobile-show {
+                margin-left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .main-content.mobile-expanded {
+                margin-left: var(--sidebar-width);
+            }
+        }
+
+        /* Custom Utilities */
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .shadow-soft {
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        }
+
+        .rounded-lg {
+            border-radius: 0.75rem;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .spinner-lg {
+            width: 4rem;
+            height: 4rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay (hidden by default) -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="spinner-border text-primary spinner-lg" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="mt-3 fw-semibold">Processing your request...</div>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <!-- Sidebar Toggle Button -->
+            <button class="btn btn-link text-white me-3 d-lg-none" id="sidebarToggleMobile">
+                <i class="fas fa-bars fa-lg"></i>
+            </button>
+
+            <!-- Brand Logo -->
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <i class="fas fa-graduation-cap brand-icon"></i>
+                <span class="d-none d-md-inline">Graduate Career Tracing</span>
+                <span class="d-inline d-md-none">GCT</span>
+            </a>
+
+            <!-- Desktop Sidebar Toggle -->
+            <button class="btn btn-link text-white d-none d-lg-block" id="sidebarToggleDesktop">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Right Navigation -->
+            <div class="navbar-collapse collapse justify-content-end">
+                <ul class="navbar-nav">
+                    <!-- Notifications -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-bell"></i>
+                            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle" style="font-size: 0.6rem;">3</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end shadow-lg" style="width: 320px;">
+                            <div class="dropdown-header d-flex justify-content-between align-items-center">
+                                <strong>Notifications</strong>
+                                <span class="badge bg-primary rounded-pill">3 New</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0 me-3">
+                                        <i class="fas fa-user-graduate text-primary"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="small text-muted">10 minutes ago</div>
+                                        New graduate registration
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0 me-3">
+                                        <i class="fas fa-chart-line text-success"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="small text-muted">Yesterday</div>
+                                        Monthly employment report ready
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item text-center">
+                                View all notifications
+                            </a>
+                        </div>
+                    </li>
+
+                    <!-- Messages -->
+                   @*  <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end shadow-lg" style="width: 320px;">
+                            <div class="dropdown-header">
+                                <strong>Messages</strong>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="user-avatar">JD</div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="small text-muted">John Doe · 2h ago</div>
+                                        <div class="text-truncate">Can we schedule a meeting about the alumni survey?</div>
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item text-center">
+                                Read all messages
+                            </a>
+                        </div>
+                    </li>
+ *@
+                    <!-- User Menu -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar me-2">AD</div>
+                            <span class="d-none d-md-inline">Admin User</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end shadow">
+                            <div class="dropdown-header">
+                                <div class="d-flex">
+                                    <div class="user-avatar me-3">AD</div>
+                                    <div>
+                                        <strong>Admin User</strong>
+                                        <div class="small text-muted">Administrator</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-user me-2"></i>Profile
+                            </a>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-cog me-2"></i>Settings
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-th-large me-2"></i>MAIN NAVIGATION
+        </div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <a class="sidebar-menu-link active" asp-controller="Dashboard" asp-action="Index">
+                    <i class="fas fa-tachometer-alt sidebar-menu-icon"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a class="sidebar-menu-link" asp-controller="Graduates" asp-action="Index">
+                    <i class="fas fa-user-graduate sidebar-menu-icon"></i>
+                    <span>Graduates</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a class="sidebar-menu-link" asp-controller="Companies" asp-action="Index">
+                    <i class="fas fa-building sidebar-menu-icon"></i>
+                    <span>Companies</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a class="sidebar-menu-link" asp-controller="Careers" asp-action="Index">
+                    <i class="fas fa-briefcase sidebar-menu-icon"></i>
+                    <span>Career Paths</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a class="sidebar-menu-link" asp-controller="Surveys" asp-action="Index">
+                    <i class="fas fa-poll sidebar-menu-icon"></i>
+                    <span>Surveys</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a class="sidebar-menu-link" asp-controller="Reports" asp-action="Index">
+                    <i class="fas fa-chart-bar sidebar-menu-icon"></i>
+                    <span>Reports & Analytics</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a class="sidebar-menu-link" asp-controller="Alumni" asp-action="Index">
+                    <i class="fas fa-users sidebar-menu-icon"></i>
+                    <span>Alumni Network</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item mt-3">
+                <div class="sidebar-header">
+                    <i class="fas fa-cog me-2"></i>SYSTEM
+                </div>
+            </li>
+            <li class="sidebar-menu-item">
+                <a class="sidebar-menu-link" asp-controller="Users" asp-action="Index">
+                    <i class="fas fa-user-cog sidebar-menu-icon"></i>
+                    <span>User Management</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a class="sidebar-menu-link" asp-controller="Settings" asp-action="Index">
+                    <i class="fas fa-cogs sidebar-menu-icon"></i>
+                    <span>System Settings</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer mt-auto">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">
+                        &copy; @DateTime.Now.Year - Graduate Career Tracing Solution. All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0">
+                        <a href="#" class="text-decoration-none me-3">Privacy Policy</a>
+                        <a href="#" class="text-decoration-none me-3">Terms of Service</a>
+                        <a href="#" class="text-decoration-none">Help Center</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- DataTables (Optional) -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Select2 (Optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- Chart.js (Optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom Site Scripts -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Sidebar Toggle Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const sidebarToggleDesktop = document.getElementById('sidebarToggleDesktop');
+            const sidebarToggleMobile = document.getElementById('sidebarToggleMobile');
+
+            // Desktop toggle
+            if (sidebarToggleDesktop) {
+                sidebarToggleDesktop.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('expanded');
+                });
+            }
+
+            // Mobile toggle
+            if (sidebarToggleMobile) {
+                sidebarToggleMobile.addEventListener('click', function() {
+                    sidebar.classList.toggle('mobile-show');
+                    mainContent.classList.toggle('mobile-expanded');
+                });
+            }
+
+            // Close sidebar on mobile when clicking outside
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth < 992) {
+                    const isClickInsideSidebar = sidebar.contains(event.target);
+                    const isClickOnToggle = sidebarToggleMobile.contains(event.target);
+
+                    if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('mobile-show')) {
+                        sidebar.classList.remove('mobile-show');
+                        mainContent.classList.remove('mobile-expanded');
+                    }
+                }
+            });
+
+            // Set active sidebar menu item based on current URL
+            function setActiveSidebarItem() {
+                const currentPath = window.location.pathname.toLowerCase();
+                const sidebarLinks = document.querySelectorAll('.sidebar-menu-link');
+
+                sidebarLinks.forEach(link => {
+                    link.classList.remove('active');
+                    const linkPath = link.getAttribute('href').toLowerCase();
+
+                    if (currentPath.startsWith(linkPath) && linkPath !== '/') {
+                        link.classList.add('active');
+                    }
+                });
+
+                // Default to dashboard if no match
+                if (currentPath === '/' || currentPath === '/home') {
+                    document.querySelector('.sidebar-menu-link[href*="dashboard"]')?.classList.add('active');
+                }
+            }
+
+            setActiveSidebarItem();
+
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Global loading overlay functions
+            window.showLoading = function() {
+                document.getElementById('loadingOverlay').style.display = 'flex';
+            };
+
+            window.hideLoading = function() {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            };
+
+            // Auto-hide alerts after 5 seconds
+            setTimeout(function() {
+                document.querySelectorAll('.alert:not(.alert-permanent)').forEach(function(alert) {
+                    bootstrap.Alert.getInstance(alert)?.close();
+                });
+            }, 5000);
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+@* <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -49,3 +699,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+ *@
