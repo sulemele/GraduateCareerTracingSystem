@@ -5,6 +5,7 @@ namespace DataAccess.Models
 {
     public class GraduateProfile : BaseEntity
     {
+        public string? UserId { get; set; }
         public string MatricNumber { get; set; }
         [ForeignKey("Department")]
         public string DepartmentId { get; set; }

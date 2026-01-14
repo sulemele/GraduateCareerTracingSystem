@@ -1,6 +1,6 @@
 ﻿@{
-    ViewData["Title"] = "Programme Management";
-    ViewData["ActivePage"] = "Programmes";
+    ViewData["Title"] = "Department Management";
+    ViewData["ActivePage"] = "Departments";
 }
 
 <div class="container-fluid">
@@ -9,13 +9,13 @@
         <div class="row align-items-center">
             <div class="col">
                 <h1 class="page-title">
-                    <i class="fas fa-graduation-cap text-primary me-2"></i>Programme Management
+                    <i class="fas fa-building text-primary me-2"></i>Department Management
                 </h1>
-                <p class="page-subtitle">Manage academic programmes and their details</p>
+                <p class="page-subtitle">Manage academic departments and their associations with programmes</p>
             </div>
             <div class="col-auto">
-                <button class="btn btn-primary" id="btnAddProgramme">
-                    <i class="fas fa-plus me-2"></i>Add New Programme
+                <button class="btn btn-primary" id="btnAddDepartment">
+                    <i class="fas fa-plus me-2"></i>Add New Department
                 </button>
             </div>
         </div>
@@ -23,43 +23,13 @@
 
     <!-- Statistics Cards -->
     <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-4 col-md-6 mb-4">
             <div class="card stat-card stat-card-primary">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 mb-1">Total Programmes</h6>
-                            <h3 class="text-white mb-0" id="totalProgrammes">0</h3>
-                        </div>
-                        <div class="icon-circle">
-                            <i class="fas fa-graduation-cap fa-2x text-white-50"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card stat-card-success">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-white-50 mb-1">Active</h6>
-                            <h3 class="text-white mb-0" id="totalActProgrammes">--</h3>
-                        </div>
-                        <div class="icon-circle">
-                            <i class="fas fa-check-circle fa-2x text-white-50"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card stat-card-warning">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-white-50 mb-1">Departments</h6>
-                            <h3 class="text-white mb-0" id="totalDepartments">--</h3>
+                            <h6 class="text-white-50 mb-1">Total Departments</h6>
+                            <h3 class="text-white mb-0" id="totalDepartments">0</h3>
                         </div>
                         <div class="icon-circle">
                             <i class="fas fa-building fa-2x text-white-50"></i>
@@ -68,7 +38,38 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card stat-card stat-card-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-1">Active Programmes</h6>
+                            <h3 class="text-white mb-0" id="activeProgrammes">0</h3>
+                        </div>
+                        <div class="icon-circle">
+                            <i class="fas fa-graduation-cap fa-2x text-white-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+        @* <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stat-card stat-card-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-1">Departments/Programme</h6>
+                            <h3 class="text-white mb-0" id="avgDepartments">--</h3>
+                        </div>
+                        <div class="icon-circle">
+                            <i class="fas fa-chart-pie fa-2x text-white-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+        <div class="col-xl-4 col-md-6 mb-4">
             <div class="card stat-card stat-card-danger">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -91,38 +92,49 @@
             <div class="row align-items-center">
                 <div class="col">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-list me-2"></i>Programme List
+                        <i class="fas fa-list me-2"></i>Department List
                     </h5>
                 </div>
                 <div class="col-auto">
-                    <div class="input-group input-group-sm" style="width: 300px;">
-                        <input type="text" class="form-control" placeholder="Search programmes..." id="searchProgramme">
-                        <button class="btn btn-outline-secondary" type="button" id="btnSearch">
-                            <i class="fas fa-search"></i>
-                        </button>
+                    <div class="row g-2">
+                        <div class="col-auto">
+                            <select class="form-select form-select-sm" id="filterProgramme">
+                                <option value="">All Programmes</option>
+                                <!-- Programmes will be loaded via AJAX -->
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <div class="input-group input-group-sm" style="width: 250px;">
+                                <input type="text" class="form-control" placeholder="Search departments..." id="searchDepartment">
+                                <button class="btn btn-outline-secondary" type="button" id="btnSearch">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover" id="programmesTable">
+                <table class="table table-hover" id="departmentsTable">
                     <thead>
                         <tr>
                             <th width="5%">#</th>
-                            <th width="25%">Title</th>
-                            <th width="40%">Description</th>
+                            <th width="20%">Department Title</th>
+                            <th width="15%">Programme</th>
+                            <th width="30%">Description</th>
                             <th width="15%">Created Date</th>
                             <th width="15%">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="programmesTableBody">
+                    <tbody id="departmentsTableBody">
                         <tr id="loadingRow">
-                            <td colspan="5" class="text-center py-5">
+                            <td colspan="6" class="text-center py-5">
                                 <div class="spinner-border text-primary" role="status">
                                     <span class="visually-hidden">Loading...</span>
                                 </div>
-                                <p class="mt-2">Loading programmes...</p>
+                                <p class="mt-2">Loading departments...</p>
                             </td>
                         </tr>
                     </tbody>
@@ -132,12 +144,12 @@
             <!-- Empty State -->
             <div id="emptyState" class="text-center py-5" style="display: none;">
                 <div class="empty-state-icon mb-3">
-                    <i class="fas fa-graduation-cap fa-4x text-muted"></i>
+                    <i class="fas fa-building fa-4x text-muted"></i>
                 </div>
-                <h4 class="text-muted">No Programmes Found</h4>
-                <p class="text-muted">Get started by adding your first programme.</p>
-                <button class="btn btn-primary mt-3" id="btnAddFirstProgramme">
-                    <i class="fas fa-plus me-2"></i>Add First Programme
+                <h4 class="text-muted">No Departments Found</h4>
+                <p class="text-muted">Get started by adding your first department.</p>
+                <button class="btn btn-primary mt-3" id="btnAddFirstDepartment">
+                    <i class="fas fa-plus me-2"></i>Add First Department
                 </button>
             </div>
 
@@ -146,7 +158,7 @@
                 <div class="text-muted" id="paginationInfo">
                     Showing <span id="startRecord">0</span> to <span id="endRecord">0</span> of <span id="totalRecords">0</span> entries
                 </div>
-                <nav aria-label="Programme pagination">
+                <nav aria-label="Department pagination">
                     <ul class="pagination pagination-sm mb-0" id="pagination"></ul>
                 </nav>
             </div>
@@ -154,40 +166,54 @@
     </div>
 </div>
 
-<!-- Create/Edit Programme Modal -->
-<div class="modal fade" id="programmeModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+<!-- Create/Edit Department Modal -->
+<div class="modal fade" id="departmentModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Add New Programme</h5>
+                <h5 class="modal-title" id="modalTitle">Add New Department</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="programmeForm" novalidate>
+            <form id="departmentForm" novalidate>
                 @Html.AntiForgeryToken()
                 <div class="modal-body">
-                    <input type="hidden" id="programmeId" name="Id">
+                    <input type="hidden" id="departmentId" name="Id">
                     <div class="row">
                         <div class="col-md-12 mb-3">
-                            <label for="title" class="form-label required">Title</label>
+                            <label for="title" class="form-label required">Department Title</label>
                             <input type="text" class="form-control" id="title" name="Title"
-                                   placeholder="Enter programme title" required maxlength="200">
+                                   placeholder="Enter department title" required maxlength="200">
                             <div class="invalid-feedback">
                                 Please enter a valid title (3-200 characters).
                             </div>
                             <div class="form-text">
-                                The official name of the academic programme (e.g., "Computer Science", "Business Administration")
+                                The official name of the department (e.g., "Computer Science Department", "Business Administration Department")
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label for="programmeId" class="form-label required">Associated Programme</label>
+                            <select class="form-select" id="programmeId" name="ProgrammeId" required>
+                                <option value="">Select a programme...</option>
+                                <!-- Programmes will be loaded via AJAX -->
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a programme.
+                            </div>
+                            <div class="form-text">
+                                Select the academic programme this department belongs to.
                             </div>
                         </div>
 
                         <div class="col-md-12 mb-3">
                             <label for="description" class="form-label required">Description</label>
                             <textarea class="form-control" id="description" name="Description"
-                                      rows="4" placeholder="Enter programme description" required maxlength="1000"></textarea>
+                                      rows="4" placeholder="Enter department description" required maxlength="1000"></textarea>
                             <div class="invalid-feedback">
                                 Please enter a description (max 1000 characters).
                             </div>
                             <div class="form-text">
-                                Provide a detailed description of the programme, including objectives and career opportunities.
+                                Provide a detailed description of the department, including focus areas and specializations.
                             </div>
                         </div>
 
@@ -200,9 +226,12 @@
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <h5 id="previewTitle" class="text-muted">Programme Title</h5>
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 id="previewTitle" class="text-primary mb-0">Department Title</h5>
+                                        <span class="badge bg-info" id="previewProgramme">Programme</span>
+                                    </div>
                                     <p id="previewDescription" class="text-muted mb-0">
-                                        Programme description will appear here...
+                                        Department description will appear here...
                                     </p>
                                 </div>
                             </div>
@@ -215,7 +244,7 @@
                     </button>
                     <button type="submit" class="btn btn-primary" id="btnSubmit">
                         <i class="fas fa-save me-2"></i>
-                        <span id="submitText">Save Programme</span>
+                        <span id="submitText">Save Department</span>
                         <span class="spinner-border spinner-border-sm d-none" id="submitSpinner"></span>
                     </button>
                 </div>
@@ -238,8 +267,8 @@
                 <div class="mb-3">
                     <i class="fas fa-trash-alt fa-4x text-danger"></i>
                 </div>
-                <h5 class="mb-3">Are you sure you want to delete this programme?</h5>
-                <p class="text-muted mb-0" id="deleteProgrammeName">This action cannot be undone.</p>
+                <h5 class="mb-3">Are you sure you want to delete this department?</h5>
+                <p class="text-muted mb-0" id="deleteDepartmentName">This action cannot be undone.</p>
                 <div class="alert alert-warning mt-3" id="deleteWarning" style="display: none;">
                     <i class="fas fa-exclamation-circle me-2"></i>
                     <span id="warningMessage"></span>
@@ -250,20 +279,20 @@
                     <i class="fas fa-times me-2"></i>Cancel
                 </button>
                 <button type="button" class="btn btn-danger" id="btnConfirmDelete">
-                    <i class="fas fa-trash me-2"></i>Delete Programme
+                    <i class="fas fa-trash me-2"></i>Delete Department
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Programme Details Modal -->
+<!-- Department Details Modal -->
 <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="fas fa-info-circle me-2"></i>Programme Details
+                    <i class="fas fa-info-circle me-2"></i>Department Details
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -271,11 +300,24 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="mb-4">
-                            <h4 id="detailsTitle" class="text-primary mb-2"></h4>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h4 id="detailsTitle" class="text-primary mb-0"></h4>
+                                <span class="badge bg-info" id="detailsProgrammeBadge"></span>
+                            </div>
                             <p id="detailsDescription" class="mb-0"></p>
                         </div>
 
-                        <div class="row">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-subtitle mb-2 text-muted">
+                                            <i class="fas fa-graduation-cap me-2"></i>Associated Programme
+                                        </h6>
+                                        <p class="card-text" id="detailsProgramme"></p>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-md-6">
                                 <div class="card bg-light">
                                     <div class="card-body">
@@ -286,7 +328,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div class="card bg-light">
                                     <div class="card-body">
                                         <h6 class="card-subtitle mb-2 text-muted">
@@ -305,7 +350,7 @@
                     <i class="fas fa-times me-2"></i>Close
                 </button>
                 <button type="button" class="btn btn-primary" id="btnEditFromDetails">
-                    <i class="fas fa-edit me-2"></i>Edit Programme
+                    <i class="fas fa-edit me-2"></i>Edit Department
                 </button>
             </div>
         </div>
@@ -328,26 +373,26 @@
         gap: 0.5rem;
     }
 
-        .action-buttons .btn {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-        }
+    .action-buttons .btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+    }
 
     .empty-state-icon {
         opacity: 0.5;
     }
 
-    .programme-title {
+    .department-title {
         font-weight: 600;
         color: #2c3e50;
         cursor: pointer;
         transition: color 0.2s;
     }
 
-        .programme-title:hover {
-            color: #3498db;
-            text-decoration: underline;
-        }
+    .department-title:hover {
+        color: #3498db;
+        text-decoration: underline;
+    }
 
     .description-truncate {
         display: -webkit-box;
@@ -355,6 +400,11 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .programme-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
     }
 
     .modal-content {
@@ -370,26 +420,31 @@
 
     <script>
         // Global variables
+        let departmentsData = [];
         let programmesData = [];
-        let currentProgrammeId = null;
+        let currentDepartmentId = null;
         let currentPage = 1;
         const itemsPerPage = 10;
         let filteredData = [];
 
         $(document).ready(function() {
-            // Load programmes on page load
+            // Load programmes for dropdowns
             loadProgrammes();
 
+            // Load departments on page load
+            loadDepartments();
+
             // Event Listeners
-            $('#btnAddProgramme, #btnAddFirstProgramme').click(openCreateModal);
-            $('#searchProgramme').on('keyup', filterProgrammes);
-            $('#btnSearch').click(filterProgrammes);
+            $('#btnAddDepartment, #btnAddFirstDepartment').click(openCreateModal);
+            $('#searchDepartment').on('keyup', filterDepartments);
+            $('#btnSearch').click(filterDepartments);
+            $('#filterProgramme').change(filterDepartments);
 
             // Live preview in modal
-            $('#title, #description').on('input', updatePreview);
+            $('#title, #description, #programmeId').on('input change', updatePreview);
 
             // Form submission
-            $('#programmeForm').submit(handleFormSubmit);
+            $('#departmentForm').submit(handleFormSubmit);
 
             // Delete confirmation
             $('#btnConfirmDelete').click(confirmDelete);
@@ -418,25 +473,50 @@
             };
         });
 
-        // Load programmes from server
+        // Load programmes for dropdown
         function loadProgrammes() {
-            showLoading();
             $.ajax({
-                url: '@Url.Action("GetProgrammes", "Programme")',
+                url: '@Url.Action("GetProgrammes", "Department")',
                 type: 'GET',
                 success: function(response) {
                     if (response.success) {
                         programmesData = response.data;
-                        filteredData = [...programmesData];
-                        updateStatistics();
-                        renderProgrammesTable();
-                        setupPagination();
-                    } else {
-                        showError('Failed to load programmes: ' + response.message);
+
+                        // Populate filter dropdown
+                        const filterSelect = $('#filterProgramme');
+                        filterSelect.empty();
+                        filterSelect.append('<option value="">All Programmes</option>');
+
+                        programmesData.forEach(programme => {
+                            filterSelect.append(`<option value="${programme.id}">${programme.title}</option>`);
+                        });
                     }
                 },
                 error: function(xhr, status, error) {
-                    showError('Error loading programmes: ' + error);
+                    console.error('Error loading programmes:', error);
+                }
+            });
+        }
+
+        // Load departments from server
+        function loadDepartments() {
+            showLoading();
+            $.ajax({
+                url: '@Url.Action("GetDepartments", "Department")',
+                type: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        departmentsData = response.data;
+                        filteredData = [...departmentsData];
+                        updateStatistics();
+                        renderDepartmentsTable();
+                        setupPagination();
+                    } else {
+                        showError('Failed to load departments: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showError('Error loading departments: ' + error);
                 },
                 complete: function() {
                     hideLoading();
@@ -446,23 +526,25 @@
 
         // Update statistics
         function updateStatistics() {
-            $('#totalProgrammes').text(programmesData.length);
-            $('#totalActProgrammes').text(programmesData.length);
-            
+            $('#totalDepartments').text(departmentsData.length);
 
-            if (programmesData.length > 0) {
-                const latest = programmesData[0];
-                
-                $('#latestUpdate').text(formatDate(latest.result.updatedAt));
-                $('#totalDepartments').text(latest.result.deptCount);
+            // Count unique programmes
+            const uniqueProgrammes = [...new Set(departmentsData.map(d => d.programmeId))];
+            $('#activeProgrammes').text(uniqueProgrammes.length);
+
+            // Calculate average departments per programme
+            const avgDepartments = uniqueProgrammes.length > 0 ? (departmentsData.length / uniqueProgrammes.length).toFixed(1) : '0';
+            $('#avgDepartments').text(avgDepartments);
+
+            if (departmentsData.length > 0) {
+                const latest = departmentsData[0];
+                $('#latestUpdate').text(formatDate(latest.UpdatedAt));
             }
-
-
         }
 
-        // Render programmes table
-        function renderProgrammesTable() {
-            const tbody = $('#programmesTableBody');
+        // Render departments table
+        function renderDepartmentsTable() {
+            const tbody = $('#departmentsTableBody');
             tbody.empty();
 
             if (filteredData.length === 0) {
@@ -477,47 +559,48 @@
             const startIndex = (currentPage - 1) * itemsPerPage;
             const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
             const pageData = filteredData.slice(startIndex, endIndex);
-          
 
-            pageData.forEach((programme, index) => {
-                debugger;
+            pageData.forEach((department, index) => {
                 const rowNumber = startIndex + index + 1;
                 const row = `
                     <tr>
                         <td>${rowNumber}</td>
                         <td>
-                            <div class="programme-title" onclick="showDetails('${programme.result.id}')">
-                                ${programme.result.title}
+                            <div class="department-title" onclick="showDetails('${department.id}')">
+                                ${department.title}
                             </div>
-                            <br />
-                            <a href="Department/Index?progId=${programme.result.id}">Show Department(s)</a>
                         </td>
                         <td>
-                            <div class="description-truncate" title="${programme.result.description}">
-                                ${programme.result.description}
+                            <span class="badge bg-info programme-badge" title="${department.programmeTitle}">
+                                ${truncateText(department.programmeTitle, 20)}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="description-truncate" title="${department.description}">
+                                ${department.description}
                             </div>
                         </td>
                         <td>
                             <span class="badge bg-light text-dark">
                                 <i class="fas fa-calendar me-1"></i>
-                                ${formatDate(programme.result.createdAt)}
+                                ${formatDate(department.createdAt)}
                             </span>
                         </td>
                         <td>
                             <div class="action-buttons">
                                 <button class="btn btn-sm btn-outline-primary"
-                                        onclick="showDetails('${programme.result.id}')"
+                                        onclick="showDetails('${department.id}')"
                                         title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 <button class="btn btn-sm btn-outline-success"
-                                        onclick="openEditModal('${programme.result.id}')"
-                                        title="Edit Programme">
+                                        onclick="openEditModal('${department.id}')"
+                                        title="Edit Department">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn btn-sm btn-outline-danger"
-                                        onclick="confirmDeleteModal('${programme.result.id}', '${programme.result.title}')"
-                                        title="Delete Programme">
+                                        onclick="confirmDeleteModal('${department.id}', '${department.title}')"
+                                        title="Delete Department">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -575,78 +658,100 @@
         // Change page
         function changePage(page) {
             currentPage = page;
-            renderProgrammesTable();
+            renderDepartmentsTable();
             setupPagination();
         }
 
-        // Filter programmes
-        function filterProgrammes() {
-            const searchTerm = $('#searchProgramme').val().toLowerCase();
+        // Filter departments
+        function filterDepartments() {
+            const searchTerm = $('#searchDepartment').val().toLowerCase();
+            const programmeFilter = $('#filterProgramme').val();
 
-            if (!searchTerm) {
-                filteredData = [...programmesData];
-            } else {
-                filteredData = programmesData.filter(programme =>
-                    programme.Title.toLowerCase().includes(searchTerm) ||
-                    programme.Description.toLowerCase().includes(searchTerm)
-                );
-            }
+            filteredData = departmentsData.filter(department => {
+                const matchesSearch = !searchTerm ||
+                    department.Title.toLowerCase().includes(searchTerm) ||
+                    department.Description.toLowerCase().includes(searchTerm) ||
+                    department.ProgrammeTitle.toLowerCase().includes(searchTerm);
+
+                const matchesProgramme = !programmeFilter || department.ProgrammeId === programmeFilter;
+
+                return matchesSearch && matchesProgramme;
+            });
 
             currentPage = 1;
-            renderProgrammesTable();
+            renderDepartmentsTable();
             setupPagination();
         }
 
         // Open create modal
         function openCreateModal() {
-            $('#modalTitle').text('Add New Programme');
-            $('#submitText').text('Save Programme');
-            $('#programmeId').val('');
+            $('#modalTitle').text('Add New Department');
+            $('#submitText').text('Save Department');
+            $('#departmentId').val('');
             $('#title').val('');
             $('#description').val('');
+            $('#programmeId').val('');
+
+            // Populate programme dropdown
+            populateProgrammeDropdown();
 
             // Reset validation
-            $('#programmeForm').removeClass('was-validated');
+            $('#departmentForm').removeClass('was-validated');
             $('.invalid-feedback').hide();
             $('.is-invalid').removeClass('is-invalid');
 
             updatePreview();
 
-            const modal = new bootstrap.Modal(document.getElementById('programmeModal'));
+            const modal = new bootstrap.Modal(document.getElementById('departmentModal'));
             modal.show();
+        }
+
+        // Populate programme dropdown
+        function populateProgrammeDropdown(selectedId = '') {
+            const programmeSelect = $('#programmeId');
+            programmeSelect.empty();
+            programmeSelect.append('<option value="">Select a programme...</option>');
+
+            programmesData.forEach(programme => {
+                const selected = programme.id === selectedId ? 'selected' : '';
+                programmeSelect.append(`<option value="${programme.id}" ${selected}>${programme.title}</option>`);
+            });
         }
 
         // Open edit modal
         function openEditModal(id) {
             showLoading();
             $.ajax({
-                url: '@Url.Action("GetProgramme", "Programme")' + '/' + id,
+                url: '@Url.Action("GetDepartment", "Department")' + '/' + id,
                 type: 'GET',
                 success: function(response) {
                     if (response.success) {
-                        const programme = response.data;
+                        const department = response.data;
 
-                        $('#modalTitle').text('Edit Programme');
-                        $('#submitText').text('Update Programme');
-                        $('#programmeId').val(programme.id);
-                        $('#title').val(programme.title);
-                        $('#description').val(programme.description);
+                        $('#modalTitle').text('Edit Department');
+                        $('#submitText').text('Update Department');
+                        $('#departmentId').val(department.id);
+                        $('#title').val(department.title);
+                        $('#description').val(department.description);
+
+                        // Populate programme dropdown with selected value
+                        populateProgrammeDropdown(department.programmeId);
 
                         // Reset validation
-                        $('#programmeForm').removeClass('was-validated');
+                        $('#departmentForm').removeClass('was-validated');
                         $('.invalid-feedback').hide();
                         $('.is-invalid').removeClass('is-invalid');
 
                         updatePreview();
 
-                        const modal = new bootstrap.Modal(document.getElementById('programmeModal'));
+                        const modal = new bootstrap.Modal(document.getElementById('departmentModal'));
                         modal.show();
                     } else {
-                        showError('Failed to load programme details: ' + response.message);
+                        showError('Failed to load department details: ' + response.message);
                     }
                 },
                 error: function(xhr, status, error) {
-                    showError('Error loading programme: ' + error);
+                    showError('Error loading department: ' + error);
                 },
                 complete: function() {
                     hideLoading();
@@ -658,28 +763,30 @@
         function showDetails(id) {
             showLoading();
             $.ajax({
-                url: '@Url.Action("GetProgramme", "Programme")' + '/' + id,
+                url: '@Url.Action("GetDepartment", "Department")' + '/' + id,
                 type: 'GET',
                 success: function(response) {
                     if (response.success) {
-                        const programme = response.data;
+                        const department = response.data;
 
-                        $('#detailsTitle').text(programme.title);
-                        $('#detailsDescription').text(programme.description);
-                        $('#detailsCreatedAt').text(formatDateTime(programme.createdAt));
-                        $('#detailsUpdatedAt').text(formatDateTime(programme.updatedAt));
+                        $('#detailsTitle').text(department.title);
+                        $('#detailsDescription').text(department.description);
+                        $('#detailsProgramme').text(department.programmeTitle);
+                        $('#detailsProgrammeBadge').text(department.programmeTitle);
+                        $('#detailsCreatedAt').text(formatDateTime(department.createdAt));
+                        $('#detailsUpdatedAt').text(formatDateTime(department.updatedAt));
 
-                        // Store current programme ID
-                        currentProgrammeId = programme.id;
+                        // Store current department ID
+                        currentDepartmentId = department.id;
 
                         const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
                         modal.show();
                     } else {
-                        showError('Failed to load programme details: ' + response.message);
+                        showError('Failed to load department details: ' + response.message);
                     }
                 },
                 error: function(xhr, status, error) {
-                    showError('Error loading programme details: ' + error);
+                    showError('Error loading department details: ' + error);
                 },
                 complete: function() {
                     hideLoading();
@@ -691,17 +798,21 @@
         function editFromDetails() {
             $('#detailsModal').modal('hide');
             setTimeout(() => {
-                openEditModal(currentProgrammeId);
+                openEditModal(currentDepartmentId);
             }, 300);
         }
 
         // Update preview in modal
         function updatePreview() {
-            const title = $('#title').val() || 'Programme Title';
-            const description = $('#description').val() || 'Programme description will appear here...';
+            const title = $('#title').val() || 'Department Title';
+            const description = $('#description').val() || 'Department description will appear here...';
+            const programmeId = $('#programmeId').val();
+            const programme = programmesData.find(p => p.id === programmeId);
+            const programmeTitle = programme ? programme.title : 'Programme';
 
             $('#previewTitle').text(title);
             $('#previewDescription').text(description);
+            $('#previewProgramme').text(programmeTitle);
         }
 
         // Handle form submission
@@ -715,12 +826,13 @@
                 return;
             }
 
-            const programmeId = $('#programmeId').val();
-            const isEdit = !!programmeId;
+            const departmentId = $('#departmentId').val();
+            const isEdit = !!departmentId;
 
             const formData = {
                 Title: $('#title').val(),
-                Description: $('#description').val()
+                Description: $('#description').val(),
+                ProgrammeId: $('#programmeId').val()
             };
 
             // Get anti-forgery token
@@ -731,7 +843,7 @@
             $('#submitSpinner').removeClass('d-none');
 
             // Determine endpoint and method
-            const url = isEdit ? '@Url.Action("Edit", "Programme")' + '/' + programmeId : '@Url.Action("Create", "Programme")';
+            const url = isEdit ? '@Url.Action("Edit", "Department")' + '/' + departmentId : '@Url.Action("Create", "Department")';
             const method = 'POST';
 
             $.ajax({
@@ -744,15 +856,15 @@
                 data: JSON.stringify(formData),
                 success: function(response) {
                     if (response.success) {
-                        $('#programmeModal').modal('hide');
-                        showToast(isEdit ? 'Programme updated successfully!' : 'Programme created successfully!');
+                        $('#departmentModal').modal('hide');
+                        showToast(isEdit ? 'Department updated successfully!' : 'Department created successfully!');
 
                         // Refresh the data
-                        loadProgrammes();
+                        loadDepartments();
 
                         // Reset form
-                        $('#programmeForm')[0].reset();
-                        $('#programmeForm').removeClass('was-validated');
+                        $('#departmentForm')[0].reset();
+                        $('#departmentForm').removeClass('was-validated');
                     } else {
                         // Handle validation errors
                         if (response.errors && response.errors.length > 0) {
@@ -791,28 +903,12 @@
 
         // Confirm delete modal
         function confirmDeleteModal(id, title) {
-            currentProgrammeId = id;
-            $('#deleteProgrammeName').html(`You are about to delete <strong>"${title}"</strong>. This action cannot be undone.`);
+            currentDepartmentId = id;
+            $('#deleteDepartmentName').html(`You are about to delete <strong>"${title}"</strong>. This action cannot be undone.`);
 
-            // Check if programme has departments
-            $.ajax({
-                url: '@Url.Action("CheckDependencies", "Programme")' + '/' + id,
-                type: 'GET',
-                success: function(response) {
-                    if (response.hasDependencies) {
-                        $('#deleteWarning').show();
-                        $('#warningMessage').text(response.message);
-                        $('#btnConfirmDelete').prop('disabled', true);
-                    } else {
-                        $('#deleteWarning').hide();
-                        $('#btnConfirmDelete').prop('disabled', false);
-                    }
-                },
-                error: function() {
-                    $('#deleteWarning').hide();
-                    $('#btnConfirmDelete').prop('disabled', false);
-                }
-            });
+            // Hide warning by default
+            $('#deleteWarning').hide();
+            $('#btnConfirmDelete').prop('disabled', false);
 
             const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
             modal.show();
@@ -826,7 +922,7 @@
             const token = $('input[name="__RequestVerificationToken"]').val();
 
             $.ajax({
-                url: '@Url.Action("Delete", "Programme")' + '/' + currentProgrammeId,
+                url: '@Url.Action("Delete", "Department")' + '/' + currentDepartmentId,
                 type: 'POST',
                 headers: {
                     'RequestVerificationToken': token
@@ -835,22 +931,27 @@
                     $('#deleteModal').modal('hide');
 
                     if (response.success) {
-                        showToast('Programme deleted successfully!');
-                        loadProgrammes();
+                        showToast('Department deleted successfully!');
+                        loadDepartments();
                     } else {
-                        showError(response.message || 'Failed to delete programme');
+                        showError(response.message || 'Failed to delete department');
                     }
                 },
                 error: function(xhr, status, error) {
-                    showError('Error deleting programme: ' + error);
+                    showError('Error deleting department: ' + error);
                 },
                 complete: function() {
-                    $('#btnConfirmDelete').prop('disabled', false).html('<i class="fas fa-trash me-2"></i>Delete Programme');
+                    $('#btnConfirmDelete').prop('disabled', false).html('<i class="fas fa-trash me-2"></i>Delete Department');
                 }
             });
         }
 
         // Utility functions
+        function truncateText(text, maxLength) {
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        }
+
         function formatDate(dateString) {
             if (!dateString) return 'N/A';
             try {

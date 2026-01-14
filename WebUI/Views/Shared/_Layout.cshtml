@@ -98,6 +98,8 @@
             border-radius: 6px;
         }
 
+       
+
         .user-avatar {
             width: 40px;
             height: 40px;
@@ -167,6 +169,15 @@
             border-left-color: var(--secondary-color);
             font-weight: 500;
         }
+
+        .sidebar-menu-item.active > .sidebar-menu-link {
+            background-color: rgba(52, 152, 219, 0.12);
+            color: var(--secondary-color);
+            border-left-color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+
 
         .sidebar-menu-icon {
             width: 24px;
@@ -311,6 +322,23 @@
             width: 4rem;
             height: 4rem;
         }
+
+        .sidebar-submenu {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+            .sidebar-submenu .sidebar-menu-link {
+                padding-left: 40px;
+                font-size: 0.95rem;
+            }
+
+        .sidebar-menu-link.dropdown-toggle::after {
+            float: right;
+            margin-top: 6px;
+        }
+
     </style>
 </head>
 <body>
@@ -455,34 +483,28 @@
             <i class="fas fa-th-large me-2"></i>MAIN NAVIGATION
         </div>
         <ul class="sidebar-menu">
-            <li class="sidebar-menu-item">
-                <a class="sidebar-menu-link active" asp-controller="Dashboard" asp-action="Index">
+            <li class="sidebar-menu-item @ViewData["dashboard"]">
+                <a class="sidebar-menu-link" asp-controller="Home" asp-action="Index">
                     <i class="fas fa-tachometer-alt sidebar-menu-icon"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a class="sidebar-menu-link" asp-controller="Graduates" asp-action="Index">
+                <a class="sidebar-menu-link @ViewData["graduates"]" asp-controller="GraduateProfile" asp-action="Index">
                     <i class="fas fa-user-graduate sidebar-menu-icon"></i>
                     <span>Graduates</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a class="sidebar-menu-link" asp-controller="Companies" asp-action="Index">
+                <a class="sidebar-menu-link @ViewData["progs"]" asp-controller="Programme" asp-action="Index">
                     <i class="fas fa-building sidebar-menu-icon"></i>
-                    <span>Companies</span>
+                    <span>Programmes</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a class="sidebar-menu-link" asp-controller="Careers" asp-action="Index">
-                    <i class="fas fa-briefcase sidebar-menu-icon"></i>
-                    <span>Career Paths</span>
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a class="sidebar-menu-link" asp-controller="Surveys" asp-action="Index">
+                <a class="sidebar-menu-link @ViewData[" depts"]" asp-controller="Department" asp-action="Index">
                     <i class="fas fa-poll sidebar-menu-icon"></i>
-                    <span>Surveys</span>
+                    <span>Departments</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
@@ -502,12 +524,25 @@
                     <i class="fas fa-cog me-2"></i>SYSTEM
                 </div>
             </li>
-            <li class="sidebar-menu-item">
+            @* <li class="sidebar-menu-item">
                 <a class="sidebar-menu-link" asp-controller="Users" asp-action="Index">
                     <i class="fas fa-user-cog sidebar-menu-icon"></i>
                     <span>User Management</span>
                 </a>
+            </li> *@
+            <li class="sidebar-menu-item dropdown">
+                <a class="sidebar-menu-link dropdown-toggle"
+                   href="#"
+                   data-bs-toggle="collapse"
+                   data-bs-target="#userManagementMenu"
+                   aria-expanded="false">
+                    <i class="fas fa-user-cog sidebar-menu-icon"></i>
+                    <span>User Account</span>
+                </a>
+
+                <partial name="_LoginPartial" />
             </li>
+
             <li class="sidebar-menu-item">
                 <a class="sidebar-menu-link" asp-controller="Settings" asp-action="Index">
                     <i class="fas fa-cogs sidebar-menu-icon"></i>
@@ -523,7 +558,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="main-footer mt-auto">
+    @* <footer class="main-footer mt-auto">
         <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-md-6 text-center text-md-start">
@@ -540,7 +575,7 @@
                 </div>
             </div>
         </div>
-    </footer>
+    </footer> *@
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

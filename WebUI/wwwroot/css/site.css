@@ -77,3 +77,62 @@ body {
 .fade-in {
     animation: fadeIn 0.3s ease-in-out;
 }
+
+/* Graduate Profile Specific Styles */
+.avatar-circle-sm {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.badge-info {
+    background-color: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+    border: 1px solid rgba(23, 162, 184, 0.2);
+}
+
+.badge-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.badge-secondary {
+    background-color: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+    border: 1px solid rgba(108, 117, 125, 0.2);
+}
+
+.graduate-info .info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+    .graduate-info .info-item i {
+        width: 20px;
+        text-align: center;
+    }
+
+/* Responsive adjustments */
+@@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+        .action-buttons .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+}

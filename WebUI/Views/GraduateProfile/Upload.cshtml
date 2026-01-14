@@ -1,0 +1,1140 @@
+﻿@{
+    ViewData["Title"] = "Bulk Graduate Upload";
+    ViewData["ActivePage"] = "Graduates";
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h1 class="page-title">
+                    <i class="fas fa-file-excel text-success me-2"></i>Bulk Graduate Upload
+                </h1>
+                <p class="page-subtitle">Upload Excel files containing graduate information</p>
+            </div>
+            <div class="col-auto">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-list me-2"></i>View All Graduates
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Steps -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="steps">
+                        <div class="step active">
+                            <div class="step-icon">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div class="step-content">
+                                <h6 class="step-title">1. Prepare Excel File</h6>
+                                <p class="step-description">Download template or prepare your Excel file</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-icon">
+                                <i class="fas fa-upload"></i>
+                            </div>
+                            <div class="step-content">
+                                <h6 class="step-title">2. Upload & Validate</h6>
+                                <p class="step-description">Upload your file for validation</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="step-content">
+                                <h6 class="step-title">3. Review & Confirm</h6>
+                                <p class="step-description">Review data and confirm upload</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div class="step-content">
+                                <h6 class="step-title">4. Import Complete</h6>
+                                <p class="step-description">Data imported successfully</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Upload Card -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-soft">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-cloud-upload-alt me-2"></i>Upload Excel File
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row">
+                            <!-- Department Selection -->
+                            <div class="col-md-6 mb-4">
+                                <label for="departmentId" class="form-label required">
+                                    <i class="fas fa-building me-1"></i>Department
+                                </label>
+                                <select class="form-select" id="departmentId" name="DepartmentId" required>
+                                    <option value="">Select a department...</option>
+                                    <!-- Departments will be loaded via AJAX -->
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select a department.
+                                </div>
+                                <div class="form-text">
+                                    All graduates will be assigned to this department.
+                                </div>
+                            </div>
+
+                            <!-- Graduation Year -->
+                            <div class="col-md-6 mb-4">
+                                <label for="yearOfGraduation" class="form-label required">
+                                    <i class="fas fa-graduation-cap me-1"></i>Graduation Year
+                                </label>
+                                <input type="number" class="form-control" id="yearOfGraduation"
+                                       name="YearOfGraduation" min="1900" max="2100"
+                                       value="@DateTime.Now.Year" required>
+                                <div class="invalid-feedback">
+                                    Please enter a valid graduation year.
+                                </div>
+                                <div class="form-text">
+                                    Year of graduation for all uploaded graduates.
+                                </div>
+                            </div>
+
+                            <!-- File Upload Area -->
+                            <div class="col-12 mb-4">
+                                <label class="form-label required">
+                                    <i class="fas fa-file-excel me-1"></i>Excel File
+                                </label>
+
+                                <div class="file-upload-area">
+                                    <input type="file" class="file-input" id="excelFile"
+                                           name="ExcelFile" accept=".xlsx,.xls" hidden>
+
+                                    <div class="file-upload-dropzone" id="dropzone">
+                                        <div class="dropzone-content" id="dropzoneContent">
+                                            <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                            <h5 class="mb-2">Drag & Drop your Excel file here</h5>
+                                            <p class="text-muted mb-3">or click to browse</p>
+                                            <button type="button" class="btn btn-primary" id="browseBtn">
+                                                <i class="fas fa-folder-open me-2"></i>Browse Files
+                                            </button>
+                                            <p class="text-muted mt-2 mb-0">Supported formats: .xlsx, .xls</p>
+                                            <p class="text-muted mb-0">Max file size: 10MB</p>
+                                        </div>
+
+                                        <div class="file-selected" id="fileSelected" style="display: none;">
+                                            <div class="file-info">
+                                                <i class="fas fa-file-excel text-success fa-2x me-3"></i>
+                                                <div>
+                                                    <h6 class="mb-1" id="fileName">filename.xlsx</h6>
+                                                    <p class="text-muted mb-0" id="fileSize">-- KB</p>
+                                                </div>
+                                            </div>
+                                            <div class="file-actions">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" id="removeFile">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="invalid-feedback" id="fileError">
+                                        Please upload an Excel file.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Validation Status -->
+                            <div class="col-12 mb-4" id="validationStatus" style="display: none;">
+                                <div class="alert" id="validationAlert">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0 me-3" id="validationIcon">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="alert-heading mb-1" id="validationTitle">Validating file...</h6>
+                                            <p class="mb-0" id="validationMessage">Please wait while we validate your Excel file.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Upload Progress -->
+                            <div class="col-12 mb-4" id="uploadProgress" style="display: none;">
+                                <div class="progress-container">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Uploading...</span>
+                                        <span id="progressPercent">0%</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                             id="progressBar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="text-center mt-2">
+                                        <small class="text-muted" id="progressStatus">Processing...</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <a href="@Url.Action("DownloadTemplate", "GraduateProfile")"
+                                           class="btn btn-outline-success">
+                                            <i class="fas fa-download me-2"></i>Download Template
+                                        </a>
+                                        <button type="button" class="btn btn-outline-primary ms-2" id="validateBtn">
+                                            <i class="fas fa-check-circle me-2"></i>Validate File
+                                        </button>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" id="uploadBtn" disabled>
+                                        <i class="fas fa-upload me-2"></i>Upload Graduates
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar - Instructions & Preview -->
+        <div class="col-lg-4">
+            <!-- Instructions Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Instructions
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="instruction-list">
+                        <div class="instruction-item">
+                            <div class="instruction-icon">
+                                <i class="fas fa-file-download"></i>
+                            </div>
+                            <div class="instruction-content">
+                                <h6>1. Download Template</h6>
+                                <p class="text-muted">Use our template to ensure proper formatting</p>
+                            </div>
+                        </div>
+                        <div class="instruction-item">
+                            <div class="instruction-icon">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <div class="instruction-content">
+                                <h6>2. Fill Your Data</h6>
+                                <p class="text-muted">Enter graduate information in the template</p>
+                            </div>
+                        </div>
+                        <div class="instruction-item">
+                            <div class="instruction-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="instruction-content">
+                                <h6>3. Validate File</h6>
+                                <p class="text-muted">Check for errors before uploading</p>
+                            </div>
+                        </div>
+                        <div class="instruction-item">
+                            <div class="instruction-icon">
+                                <i class="fas fa-upload"></i>
+                            </div>
+                            <div class="instruction-content">
+                                <h6>4. Upload & Import</h6>
+                                <p class="text-muted">Upload validated file to import graduates</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Preview Card -->
+            <div class="card" id="previewCard" style="display: none;">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-table me-2"></i>File Preview
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" style="max-height: 300px;">
+                        <table class="table table-sm table-hover" id="previewTable">
+                            <thead>
+                                <tr id="previewHeader">
+                                    <!-- Headers will be populated via JS -->
+                                </tr>
+                            </thead>
+                            <tbody id="previewBody">
+                                <!-- Preview data will be populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center mt-3">
+                        <small class="text-muted" id="previewInfo"></small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Requirements Card -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-exclamation-circle me-2"></i>Requirements
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span class="text-success">Matric Number</span> (Required)
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span class="text-success">Name</span> (Required)
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-circle text-muted me-2"></i>
+                            <span class="text-muted">Email</span> (Optional)
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-circle text-muted me-2"></i>
+                            <span class="text-muted">Gender</span> (Optional)
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-circle text-muted me-2"></i>
+                            <span class="text-muted">Phone Number</span> (Optional)
+                        </li>
+                        <li>
+                            <i class="fas fa-circle text-muted me-2"></i>
+                            <span class="text-muted">Academic Qualification</span> (Optional)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div class="modal fade" id="resultsModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resultsModalTitle">
+                        <i class="fas fa-chart-bar me-2"></i>Upload Results
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="successResults" style="display: none;">
+                        <div class="text-center mb-4">
+                            <div class="success-icon mb-3">
+                                <i class="fas fa-check-circle fa-4x text-success"></i>
+                            </div>
+                            <h4 class="text-success mb-3" id="successTitle">Upload Successful!</h4>
+                            <p class="text-muted" id="successMessage"></p>
+
+                            <div class="row mt-4">
+                                <div class="col-md-4">
+                                    <div class="stat-box text-center">
+                                        <h3 class="text-primary" id="processedCount">0</h3>
+                                        <p class="text-muted mb-0">Processed</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-box text-center">
+                                        <h3 class="text-success" id="importedCount">0</h3>
+                                        <p class="text-muted mb-0">Imported</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-box text-center">
+                                        <h3 class="text-danger" id="failedCount">0</h3>
+                                        <p class="text-muted mb-0">Failed</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="errorResults" style="display: none;">
+                        <div class="text-center mb-4">
+                            <div class="error-icon mb-3">
+                                <i class="fas fa-exclamation-circle fa-4x text-danger"></i>
+                            </div>
+                            <h4 class="text-danger mb-3" id="errorTitle">Upload Failed</h4>
+                            <p class="text-muted" id="errorMessage"></p>
+                        </div>
+
+                        <div class="alert alert-warning" id="validationErrors" style="display: none;">
+                            <h6 class="alert-heading">Validation Errors:</h6>
+                            <ul class="mb-0" id="errorList"></ul>
+                        </div>
+
+                        <div class="failed-rows" id="failedRowsSection" style="display: none;">
+                            <h6 class="mb-3">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Failed Rows
+                            </h6>
+                            <div class="table-responsive" style="max-height: 300px;">
+                                <table class="table table-sm table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Row</th>
+                                            <th>Matric Number</th>
+                                            <th>Error</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="failedRowsTable">
+                                        <!-- Failed rows will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeBtn">
+                        <i class="fas fa-times me-2"></i>Close
+                    </button>
+                    <button type="button" class="btn btn-primary" id="viewGraduatesBtn" style="display: none;">
+                        <i class="fas fa-list me-2"></i>View Graduates
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="downloadErrorsBtn" style="display: none;">
+                        <i class="fas fa-download me-2"></i>Download Error Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Upload Steps */
+    .steps {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+    }
+
+        .steps:before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 50px;
+            right: 50px;
+            height: 3px;
+            background-color: #e9ecef;
+            z-index: 1;
+        }
+
+    .step {
+        flex: 1;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+
+    .step-icon {
+        width: 60px;
+        height: 60px;
+        background: white;
+        border: 3px solid #e9ecef;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 1.5rem;
+        color: #6c757d;
+        transition: all 0.3s;
+    }
+
+    .step.active .step-icon {
+        border-color: #3498db;
+        background: #3498db;
+        color: white;
+    }
+
+    .step-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .step-description {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    /* File Upload Area */
+    .file-upload-area {
+        position: relative;
+    }
+
+    .file-upload-dropzone {
+        border: 2px dashed #dee2e6;
+        border-radius: 10px;
+        padding: 3rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        background-color: #f8f9fa;
+    }
+
+        .file-upload-dropzone:hover {
+            border-color: #3498db;
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .file-upload-dropzone.dragover {
+            border-color: #2ecc71;
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+    .dropzone-content {
+        transition: all 0.3s;
+    }
+
+    .file-selected {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        animation: fadeIn 0.3s;
+    }
+
+    .file-info {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Instructions */
+    .instruction-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .instruction-item {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .instruction-icon {
+        width: 40px;
+        height: 40px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        color: #3498db;
+        font-size: 1.25rem;
+    }
+
+    .instruction-content h6 {
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    /* Preview Table */
+    #previewTable th, #previewTable td {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+    }
+
+    /* Results Modal */
+    .success-icon, .error-icon {
+        animation: bounceIn 0.5s;
+    }
+
+    .stat-box {
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+        .stat-box h3 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+    /* Animations */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes bounceIn {
+        0% {
+            transform: scale(0.3);
+            opacity: 0;
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+
+        70% {
+            transform: scale(0.9);
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .steps {
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+            .steps:before {
+                display: none;
+            }
+
+        .step {
+            display: flex;
+            align-items: center;
+            text-align: left;
+        }
+
+        .step-icon {
+            margin: 0 15px 0 0;
+            flex-shrink: 0;
+        }
+    }
+</style>
+
+@section Scripts {
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        let selectedFile = null;
+        let departmentsData = [];
+        let validationResult = null;
+
+        $(document).ready(function() {
+            // Load departments
+            loadDepartments();
+
+            // Initialize event listeners
+            initializeEventListeners();
+
+            // Show toast notification function
+            window.showToast = function(message, type = 'success') {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer);
+                        toast.addEventListener('mouseleave', Swal.resumeTimer);
+                    }
+                });
+
+                Toast.fire({
+                    icon: type,
+                    title: message
+                });
+            };
+        });
+
+        function loadDepartments() {
+            $.ajax({
+                url: '@Url.Action("GetDepartments", "GraduateProfile")',
+                type: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        departmentsData = response.data;
+                        const select = $('#departmentId');
+                        select.empty();
+                        select.append('<option value="">Select a department...</option>');
+
+                        departmentsData.forEach(dept => {
+                            select.append(`<option value="${dept.id}">${dept.title}</option>`);
+                        });
+                    } else {
+                        showError('Failed to load departments: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showError('Error loading departments: ' + error);
+                }
+            });
+        }
+
+        function initializeEventListeners() {
+            // File selection
+            $('#browseBtn').click(function() {
+                $('#excelFile').click();
+            });
+
+            $('#excelFile').change(handleFileSelect);
+
+            // Remove file
+            $('#removeFile').click(function(e) {
+                e.stopPropagation();
+                resetFileSelection();
+            });
+
+            // Drag and drop
+            const dropzone = $('#dropzone')[0];
+            dropzone.addEventListener('dragover', handleDragOver);
+            dropzone.addEventListener('dragleave', handleDragLeave);
+            dropzone.addEventListener('drop', handleDrop);
+
+            // Form validation
+            $('#uploadForm').on('submit', handleFormSubmit);
+
+            // Validate button
+            $('#validateBtn').click(validateFile);
+
+            // Results modal buttons
+            $('#viewGraduatesBtn').click(function() {
+                window.location.href = '@Url.Action("Index", "GraduateProfile")';
+            });
+
+            $('#downloadErrorsBtn').click(downloadErrorReport);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $('#dropzone').addClass('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $('#dropzone').removeClass('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $('#dropzone').removeClass('dragover');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            // Validate file type
+            const validExtensions = ['.xlsx', '.xls'];
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+            if (!validExtensions.includes(fileExtension)) {
+                showError('Please select an Excel file (.xlsx or .xls)');
+                return;
+            }
+
+            // Validate file size (10MB)
+            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+            if (file.size > maxSize) {
+                showError('File size must be less than 10MB');
+                return;
+            }
+
+            selectedFile = file;
+            updateFileUI(file);
+            resetValidation();
+        }
+
+        function updateFileUI(file) {
+            const fileName = file.name;
+            const fileSize = formatFileSize(file.size);
+
+            $('#fileName').text(fileName);
+            $('#fileSize').text(fileSize);
+            $('#dropzoneContent').hide();
+            $('#fileSelected').show();
+
+            // Enable validate button
+            $('#validateBtn').prop('disabled', false);
+        }
+
+        function resetFileSelection() {
+            selectedFile = null;
+            $('#excelFile').val('');
+            $('#dropzoneContent').show();
+            $('#fileSelected').hide();
+            $('#validateBtn').prop('disabled', true);
+            $('#uploadBtn').prop('disabled', true);
+            resetValidation();
+        }
+
+        function resetValidation() {
+            validationResult = null;
+            $('#validationStatus').hide();
+            $('#previewCard').hide();
+            $('#previewHeader').empty();
+            $('#previewBody').empty();
+        }
+
+        async function validateFile() {
+            if (!selectedFile) {
+                showError('Please select a file first');
+                return;
+            }
+
+            if (!$('#departmentId').val() || !$('#yearOfGraduation').val()) {
+                showError('Please select department and enter graduation year first');
+                return;
+            }
+
+            // Show validation status
+            $('#validationStatus').show();
+            $('#validationAlert').removeClass('alert-success alert-danger').addClass('alert-info');
+            $('#validationIcon').html('<i class="fas fa-spinner fa-spin"></i>');
+            $('#validationTitle').text('Validating file...');
+            $('#validationMessage').text('Please wait while we validate your Excel file.');
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('excelFile', selectedFile);
+
+            // Get anti-forgery token
+            const token = $('input[name="__RequestVerificationToken"]').val();
+
+            try {
+                const response = await fetch('@Url.Action("ValidateExcel", "GraduateProfile")', {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    validationResult = result;
+
+                    // Update validation status
+                    $('#validationAlert').removeClass('alert-info').addClass('alert-success');
+                    $('#validationIcon').html('<i class="fas fa-check-circle"></i>');
+                    $('#validationTitle').text('File is valid!');
+                    $('#validationMessage').text(`Found ${result.rowCount} graduate(s) in the file.`);
+
+                    // Show preview
+                    showPreview(result);
+
+                    // Enable upload button
+                    $('#uploadBtn').prop('disabled', false);
+
+                    // Update steps
+                    updateStep(2);
+                } else {
+                    // Update validation status with error
+                    $('#validationAlert').removeClass('alert-info').addClass('alert-danger');
+                    $('#validationIcon').html('<i class="fas fa-exclamation-circle"></i>');
+                    $('#validationTitle').text('Validation failed');
+                    $('#validationMessage').text(result.message);
+
+                    // Show errors if any
+                    if (result.errors && result.errors.length > 0) {
+                        showErrorDetails(result.errors);
+                    }
+
+                    $('#uploadBtn').prop('disabled', true);
+                }
+            } catch (error) {
+                $('#validationAlert').removeClass('alert-info').addClass('alert-danger');
+                $('#validationIcon').html('<i class="fas fa-exclamation-circle"></i>');
+                $('#validationTitle').text('Validation error');
+                $('#validationMessage').text('An error occurred during validation: ' + error.message);
+                $('#uploadBtn').prop('disabled', true);
+            }
+        }
+
+        function showPreview(result) {
+            $('#previewCard').show();
+
+            // Clear previous data
+            $('#previewHeader').empty();
+            $('#previewBody').empty();
+
+            if (result.preview && result.preview.length > 0) {
+                // Get headers from first row
+                const headers = Object.keys(result.preview[0]);
+
+                // Add headers
+                headers.forEach(header => {
+                    $('#previewHeader').append(`<th>${header}</th>`);
+                });
+
+                // Add data rows (skip header row which is at index 0)
+                for (let i = 1; i < Math.min(result.preview.length, 6); i++) {
+                    const row = result.preview[i];
+                    const rowHtml = $('<tr></tr>');
+
+                    headers.forEach(header => {
+                        const value = row[header] || '';
+                        rowHtml.append(`<td>${value}</td>`);
+                    });
+
+                    $('#previewBody').append(rowHtml);
+                }
+
+                // Update preview info
+                const totalRows = result.rowCount;
+                const shownRows = Math.min(totalRows, 5);
+                $('#previewInfo').text(`Showing ${shownRows} of ${totalRows} rows`);
+            }
+        }
+
+        function showErrorDetails(errors) {
+            let errorHtml = '';
+            errors.forEach(error => {
+                errorHtml += `<li>${error}</li>`;
+            });
+
+            $('#validationMessage').after(`
+                <div class="mt-2">
+                    <h6 class="mb-1">Issues found:</h6>
+                    <ul class="mb-0">${errorHtml}</ul>
+                </div>
+            `);
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const form = $(this)[0];
+            if (!form.checkValidity()) {
+                $(this).addClass('was-validated');
+                return;
+            }
+
+            if (!selectedFile) {
+                showError('Please select a file first');
+                return;
+            }
+
+            // Show progress
+            $('#uploadProgress').show();
+            updateProgress(0, 'Preparing upload...');
+
+            // Update steps
+            updateStep(3);
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('DepartmentId', $('#departmentId').val());
+            formData.append('YearOfGraduation', $('#yearOfGraduation').val());
+            formData.append('ExcelFile', selectedFile);
+
+            // Get anti-forgery token
+            const token = $('input[name="__RequestVerificationToken"]').val();
+
+            try {
+                const xhr = new XMLHttpRequest();
+
+                // Progress tracking
+                xhr.upload.addEventListener('progress', function(e) {
+                    if (e.lengthComputable) {
+                        const percentComplete = Math.round((e.loaded / e.total) * 100);
+                        updateProgress(percentComplete, 'Uploading file...');
+                    }
+                });
+
+                xhr.addEventListener('load', function() {
+                    try {
+                        const result = JSON.parse(xhr.responseText);
+                        handleUploadResult(result);
+                    } catch (parseError) {
+                        showUploadError('Error parsing server response');
+                    }
+                });
+
+                xhr.addEventListener('error', function() {
+                    showUploadError('Network error occurred during upload');
+                });
+
+                xhr.open('POST', '@Url.Action("UploadExcel", "GraduateProfile")');
+                xhr.setRequestHeader('RequestVerificationToken', token);
+                xhr.send(formData);
+
+            } catch (error) {
+                showUploadError('Upload error: ' + error.message);
+            }
+        }
+
+        function updateProgress(percent, status) {
+            $('#progressBar').css('width', percent + '%');
+            $('#progressPercent').text(percent + '%');
+            $('#progressStatus').text(status);
+        }
+
+        function handleUploadResult(result) {
+            $('#uploadProgress').hide();
+
+            if (result.success) {
+                // Update steps
+                updateStep(4);
+
+                // Show success results
+                showSuccessResults(result);
+            } else {
+                // Show error results
+                showErrorResults(result);
+            }
+        }
+
+        function showSuccessResults(result) {
+            $('#successResults').show();
+            $('#errorResults').hide();
+            $('#successMessage').text(result.message);
+            $('#processedCount').text(result.details?.TotalRows || result.processed || 0);
+            $('#importedCount').text(result.processed || 0);
+            $('#failedCount').text(result.details?.Failed || 0);
+
+            $('#viewGraduatesBtn').show();
+            $('#downloadErrorsBtn').hide();
+            $('#closeBtn').text('Close').removeClass('btn-danger').addClass('btn-secondary');
+
+            const modal = new bootstrap.Modal(document.getElementById('resultsModal'));
+            modal.show();
+
+            // Reset form after successful upload
+            setTimeout(() => {
+                $('#uploadForm')[0].reset();
+                resetFileSelection();
+                resetValidation();
+                $('#uploadForm').removeClass('was-validated');
+                updateStep(1);
+            }, 300);
+        }
+
+        function showErrorResults(result) {
+            $('#successResults').hide();
+            $('#errorResults').show();
+            $('#errorMessage').text(result.message);
+
+            // Show validation errors
+            if (result.errors && result.errors.length > 0) {
+                $('#validationErrors').show();
+                let errorHtml = '';
+                result.errors.forEach(error => {
+                    errorHtml += `<li>${error}</li>`;
+                });
+                $('#errorList').html(errorHtml);
+            } else {
+                $('#validationErrors').hide();
+            }
+
+            // Show failed rows
+            if (result.failedRows && result.failedRows.length > 0) {
+                $('#failedRowsSection').show();
+                $('#failedRowsTable').empty();
+
+                result.failedRows.forEach(row => {
+                    const matric = row.Data?.MatricNumber || row.Data?.matricnumber || 'N/A';
+                    $('#failedRowsTable').append(`
+                        <tr>
+                            <td>${row.RowNumber}</td>
+                            <td>${matric}</td>
+                            <td class="text-danger">${row.Error}</td>
+                        </tr>
+                    `);
+                });
+            } else {
+                $('#failedRowsSection').hide();
+            }
+
+            $('#viewGraduatesBtn').hide();
+            $('#downloadErrorsBtn').show();
+            $('#closeBtn').text('Try Again').removeClass('btn-secondary').addClass('btn-danger');
+
+            const modal = new bootstrap.Modal(document.getElementById('resultsModal'));
+            modal.show();
+        }
+
+        function showUploadError(message) {
+            $('#uploadProgress').hide();
+            showError(message);
+        }
+
+        function updateStep(stepNumber) {
+            $('.step').removeClass('active');
+            $(`.step:nth-child(${stepNumber})`).addClass('active');
+        }
+
+        function downloadErrorReport() {
+            // Implement error report download if needed
+            showToast('Error report download feature coming soon!', 'info');
+        }
+
+        function showError(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: message,
+                confirmButtonColor: '#dc3545'
+            });
+        }
+
+        // Utility functions
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function showLoading() {
+            $('#loadingOverlay').show();
+        }
+
+        function hideLoading() {
+            $('#loadingOverlay').hide();
+        }
+    </script>
+}

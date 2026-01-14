@@ -33,13 +33,14 @@ namespace WebUI.Controllers
 
                 var programmes = programmeList
                     .OrderByDescending(p => p.CreatedAt)
-                    .Select(p => new ProgrammeDTO
+                    .Select(async p => new ProgrammeDTO
                     {
                         Id = p.Id,
                         Title = p.Title,
                         Description = p.Description,
                         CreatedAt = p.CreatedAt,
-                        UpdatedAt = p.UpdatedAt
+                        UpdatedAt = p.UpdatedAt,
+                        DeptCount = _repoDept.GetAll().Result.Count()
                     })
                     .ToList();
 

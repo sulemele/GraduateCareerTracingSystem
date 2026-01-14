@@ -1,0 +1,536 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register Account";
+    // Layout = "_Layout"; // Ensure you're using your professional layout
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-xl-10">
+            <div class="card shadow-soft border-0">
+                <div class="row g-0">
+                    <!-- Left Side - Registration Form -->
+                    <div class="col-lg-6">
+                        <div class="p-4 p-md-5">
+                            <!-- Logo/Brand -->
+                            <div class="text-center mb-4">
+                                <a asp-controller="Home" asp-action="Index" class="d-inline-block mb-4">
+                                    <i class="fas fa-graduation-cap fa-2x text-primary"></i>
+                                    <span class="h4 fw-bold ms-2">Graduate Career Tracing</span>
+                                </a>
+                                <h2 class="fw-bold text-primary mb-2">Create Your Account</h2>
+                                <p class="text-muted">Join our platform to track and manage graduate careers</p>
+                            </div>
+
+                            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" novalidate>
+                                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                                <!-- Graduate Status Check -->
+                                <div class="card border mb-4">
+                                    <div class="card-body">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox"
+                                                   role="switch" id="isGraduateCheck"
+                                                   style="transform: scale(1.5); margin-right: 10px;">
+                                            <label class="form-check-label fw-semibold h5" for="isGraduateCheck">
+                                                <i class="fas fa-graduation-cap me-2"></i>Are you a graduate?
+                                            </label>
+                                        </div>
+                                        <p class="text-muted mt-2 mb-0">
+                                            Check this box if you're a graduate of this institution to access graduate-specific features.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Matric Number Field (Hidden by default) -->
+                                <div class="mb-4" id="matricSection" style="display: none;">
+                                    <div class="form-floating">
+                                        <input asp-for="Input.MatricNumber" class="form-control"
+                                               placeholder="PGDE/0000/0000"
+                                               aria-describedby="matricHelp" />
+                                        <label asp-for="Input.MatricNumber">
+                                            <i class="fas fa-id-card me-2"></i>Matriculation Number
+                                        </label>
+                                        <div id="matricHelp" class="form-text">
+                                            Enter your matriculation number as recorded in the institution.
+                                            <span class="text-danger">*Required for graduates</span>
+                                        </div>
+                                        <span asp-validation-for="Input.MatricNumber" class="text-danger small"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="mb-4">
+                                    <div class="form-floating">
+                                        <input asp-for="Input.Email" class="form-control"
+                                               autocomplete="username" aria-required="true"
+                                               placeholder="name@example.com" />
+                                        <label asp-for="Input.Email">
+                                            <i class="fas fa-envelope me-2"></i>Email Address
+                                        </label>
+                                        <div class="form-text">We'll send important notifications to this email</div>
+                                        <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Password -->
+                                <div class="mb-4">
+                                    <div class="form-floating">
+                                        <input asp-for="Input.Password" class="form-control"
+                                               autocomplete="new-password" aria-required="true"
+                                               placeholder="password"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="top"
+                                               title="Password must be at least 6 characters" />
+                                        <label asp-for="Input.Password">
+                                            <i class="fas fa-lock me-2"></i>Password
+                                        </label>
+                                        <div class="form-text">
+                                            Minimum 6 characters with letters and numbers
+                                        </div>
+                                        <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="mb-4">
+                                    <div class="form-floating">
+                                        <input asp-for="Input.ConfirmPassword" class="form-control"
+                                               autocomplete="new-password" aria-required="true"
+                                               placeholder="confirm password" />
+                                        <label asp-for="Input.ConfirmPassword">
+                                            <i class="fas fa-lock me-2"></i>Confirm Password
+                                        </label>
+                                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Terms and Conditions -->
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox"
+                                               id="termsCheck" required>
+                                        <label class="form-check-label" for="termsCheck">
+                                            I agree to the <a href="#" class="text-decoration-none">Terms of Service</a>
+                                            and <a href="#" class="text-decoration-none">Privacy Policy</a>
+                                        </label>
+                                        <div class="invalid-feedback">
+                                            You must agree to the terms before registering.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="d-grid mb-4">
+                                    <button id="registerSubmit" type="submit"
+                                            class="btn btn-primary btn-lg py-3">
+                                        <i class="fas fa-user-plus me-2"></i>Create Account
+                                    </button>
+                                </div>
+
+                                <!-- Login Link -->
+                                <div class="text-center">
+                                    <p class="text-muted">
+                                        Already have an account?
+                                        <a asp-page="./Login" class="text-decoration-none fw-semibold">
+                                            <i class="fas fa-sign-in-alt me-1"></i>Sign In
+                                        </a>
+                                    </p>
+                                </div>
+                            </form>
+
+                            <!-- Divider -->
+                            <div class="d-flex align-items-center my-4">
+                                <div class="flex-grow-1 border-top"></div>
+                                <div class="mx-3 text-muted">OR</div>
+                                <div class="flex-grow-1 border-top"></div>
+                            </div>
+
+                            <!-- External Logins -->
+                            @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+                            {
+                                <div class="mb-4">
+                                    <h6 class="text-center mb-3">Sign up with</h6>
+                                    <form id="external-account" asp-page="./ExternalLogin"
+                                          asp-route-returnUrl="@Model.ReturnUrl" method="post"
+                                          class="form-horizontal">
+                                        <div class="row g-2">
+                                            @foreach (var provider in Model.ExternalLogins!)
+                                            {
+                                                <div class="col-6">
+                                                    <button type="submit" class="btn btn-outline-secondary w-100"
+                                                            name="provider" value="@provider.Name"
+                                                            title="Register using your @provider.DisplayName account">
+                                                        @if (provider.DisplayName.Contains("Google", StringComparison.OrdinalIgnoreCase))
+                                                        {
+                                                            <i class="fab fa-google me-2"></i>
+                                                        }
+                                                        else if (provider.DisplayName.Contains("Microsoft", StringComparison.OrdinalIgnoreCase))
+                                                        {
+                                                            <i class="fab fa-microsoft me-2"></i>
+                                                        }
+                                                        else if (provider.DisplayName.Contains("Facebook", StringComparison.OrdinalIgnoreCase))
+                                                        {
+                                                            <i class="fab fa-facebook me-2"></i>
+                                                        }
+                                                        @provider.DisplayName
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Right Side - Welcome Image/Info -->
+                    <div class="col-lg-6 d-none d-lg-block">
+                        <div class="h-100 bg-gradient-primary text-white p-5 d-flex flex-column justify-content-center">
+                            <div class="text-center mb-5">
+                                <i class="fas fa-user-graduate fa-4x mb-4"></i>
+                                <h2 class="fw-bold mb-3">Welcome to Graduate Career Tracing</h2>
+                                <p class="lead">Connect, track, and advance your career journey with our alumni network.</p>
+                            </div>
+
+                            <!-- Features List -->
+                            <div class="mb-5">
+                                <h4 class="mb-4"><i class="fas fa-star me-2"></i>Why Join Us?</h4>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="d-flex">
+                                            <div class="me-3">
+                                                <i class="fas fa-check-circle fa-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-bold">Career Tracking</h6>
+                                                <p class="small mb-0">Monitor your professional growth</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="d-flex">
+                                            <div class="me-3">
+                                                <i class="fas fa-check-circle fa-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-bold">Alumni Network</h6>
+                                                <p class="small mb-0">Connect with fellow graduates</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="d-flex">
+                                            <div class="me-3">
+                                                <i class="fas fa-check-circle fa-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-bold">Job Opportunities</h6>
+                                                <p class="small mb-0">Access exclusive career opportunities</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="d-flex">
+                                            <div class="me-3">
+                                                <i class="fas fa-check-circle fa-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-bold">Mentorship</h6>
+                                                <p class="small mb-0">Get guidance from experienced alumni</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="bg-white bg-opacity-10 p-4 rounded">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <h3 class="fw-bold mb-0">1K+</h3>
+                                        <p class="small mb-0">Graduates</p>
+                                    </div>
+                                    <div class="col-4">
+                                        <h3 class="fw-bold mb-0">500+</h3>
+                                        <p class="small mb-0">Companies</p>
+                                    </div>
+                                    <div class="col-4">
+                                        <h3 class="fw-bold mb-0">2K+</h3>
+                                        <p class="small mb-0">Connections</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Security Note -->
+                            <div class="mt-5">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-shield-alt fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Secure Registration</h6>
+                                        <p class="small mb-0">Your information is protected with enterprise-grade security</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom Styles for Registration Page */
+    .min-vh-100 {
+        min-height: 100vh;
+    }
+
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+    }
+
+    .shadow-soft {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .card {
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+
+    .form-floating > .form-control {
+        height: calc(3.5rem + 2px);
+        line-height: 1.25;
+        padding: 1rem 0.75rem;
+    }
+
+    .form-floating > label {
+        padding: 1rem 0.75rem;
+    }
+
+    .form-check-input:checked {
+        background-color: #3498db;
+        border-color: #3498db;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        border: none;
+        transition: all 0.3s;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+    /* Animation for matric section */
+    #matricSection {
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .card {
+            margin: 1rem;
+        }
+
+        .form-floating > .form-control,
+        .form-floating > label {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function() {
+            // Graduate status toggle
+            $('#isGraduateCheck').change(function() {
+                const matricSection = $('#matricSection');
+                const matricInput = $('#Input_MatricNumber');
+
+                if (this.checked) {
+                    // Show with animation
+                    matricSection.slideDown(300);
+                    matricInput.prop('required', true);
+                    matricInput.focus();
+
+                    // Add animation class
+                    matricSection.addClass('animate__animated animate__fadeIn');
+                    setTimeout(() => {
+                        matricSection.removeClass('animate__animated animate__fadeIn');
+                    }, 300);
+                } else {
+                    // Hide with animation
+                    matricSection.slideUp(300);
+                    matricInput.prop('required', false);
+                    matricInput.val('');
+
+                    // Remove any validation messages
+                    $('[data-valmsg-for="Input.MatricNumber"]').empty();
+                }
+            });
+
+            // Form validation for terms
+            $('#termsCheck').change(function() {
+                if (!this.checked) {
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+
+            // Form submission validation
+            $('#registerForm').submit(function(e) {
+                const isGraduate = $('#isGraduateCheck').is(':checked');
+                const matricValue = $('#Input_MatricNumber').val().trim();
+                const termsChecked = $('#termsCheck').is(':checked');
+
+                // Check terms
+                if (!termsChecked) {
+                    e.preventDefault();
+                    $('#termsCheck').addClass('is-invalid');
+                    $('.invalid-feedback').show();
+                    return;
+                }
+
+                // Validate matric number if graduate
+                if (isGraduate && !matricValue) {
+                    e.preventDefault();
+                    $('#Input_MatricNumber').addClass('is-invalid');
+                    $('[data-valmsg-for="Input.MatricNumber"]').text('Matriculation number is required for graduates.');
+                    return;
+                }
+            });
+
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Real-time matric validation
+            $('#Input_MatricNumber').on('input', function() {
+                const value = $(this).val().trim();
+                const isValid = validateMatricNumber(value);
+
+                if (value && !isValid) {
+                    $(this).addClass('is-invalid');
+                    $('[data-valmsg-for="Input.MatricNumber"]').text('Please enter a valid matriculation number format (e.g., CS/2018/001)');
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $('[data-valmsg-for="Input.MatricNumber"]').text('');
+                }
+            });
+
+            // Password strength indicator (optional enhancement)
+            $('#Input_Password').on('input', function() {
+                const password = $(this).val();
+                const strength = checkPasswordStrength(password);
+                updatePasswordStrengthIndicator(strength);
+            });
+        });
+
+        // Matric number validation function
+        function validateMatricNumber(matric) {
+            if (!matric) return true; // Empty is okay (handled by required)
+
+            // Example pattern: CS/2018/001
+            const pattern = /^[A-Za-z]{2,}\/\d{4}\/\d{3,}$/;
+            return pattern.test(matric);
+        }
+
+        // Password strength checker (optional)
+        function checkPasswordStrength(password) {
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            return strength;
+        }
+
+        function updatePasswordStrengthIndicator(strength) {
+            // Optional: Implement password strength visual feedback
+            // You can add a progress bar or color indicators
+        }
+    </script>
+}
+
+
+@* @page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <h2>Create a new account.</h2>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <label asp-for="Input.Email">Email</label>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label asp-for="Input.Password">Password</label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+        </form>
+    </div>
+    <div class="col-md-6 col-md-offset-2">
+        <section>
+            <h3>Use another service to register.</h3>
+            <hr />
+            @{
+                if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                {
+                    <div>
+                        <p>
+                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
+                            about setting up this ASP.NET application to support logging in via external services</a>.
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                        <div>
+                            <p>
+                                @foreach (var provider in Model.ExternalLogins!)
+                                {
+                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                }
+                            </p>
+                        </div>
+                    </form>
+                }
+            }
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+ *@
