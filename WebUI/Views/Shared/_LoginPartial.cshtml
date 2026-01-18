@@ -7,6 +7,15 @@
 <ul class="collapse sidebar-submenu" id="userManagementMenu">
     @if (SignInManager.IsSignedIn(User))
     {
+
+        <li class="sidebar-menu-item">
+            <a class="sidebar-menu-link"
+               href="/GraduateProfile/Profile">
+                <i class="fas fa-user-graduate sidebar-menu-icon"></i>
+                <span>Profile</span>
+            </a>
+        </li>
+        <hr />
         <li class="sidebar-menu-item">
            @*  <a class="sidebar-menu-link"
                asp-controller="Account"
@@ -15,7 +24,7 @@
                 <span>Register</span>
             </a> *@
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                <button type="submit" class="btn btn-danger ms-5">Logout</button>
             </form>
         </li>
         @* <li class="nav-item">

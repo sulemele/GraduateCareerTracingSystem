@@ -1,0 +1,1190 @@
+﻿@model WebUI.DTOs.GraduateProfileViewModel
+@{
+    ViewData["Title"] = "Graduate Profile";
+    ViewData["ActivePage"] = "Graduates";
+}
+
+<div class="container-fluid">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="profile-card shadow-soft">
+                    <!-- Profile Photo -->
+                    <div class="text-center mb-4">
+                        <div class="profile-photo-container">
+                            @if (!string.IsNullOrEmpty(Model.Graduate.PhotoUrl))
+                            {
+                                <img src="@Model.Graduate.PhotoUrl"
+                                     class="profile-photo"
+                                     alt="@Model.Graduate.Name"
+                                     onerror="this.src='/images/default-avatar.png'">
+                            }
+                            else
+                            {
+                                <div class="profile-initials">
+                                    @GetInitials(Model.Graduate.Name)
+                                </div>
+                            }
+                            <div class="profile-status @GetStatusClass(Model.Graduate.EmploymentStatus)">
+                                @GetStatusText(Model.Graduate.EmploymentStatus)
+                            </div>
+                        </div>
+
+                        <h3 class="mt-4 mb-2">@Model.Graduate.Name</h3>
+                        <p class="text-muted">@Model.Graduate.JobTitle</p>
+
+                        <!-- Quick Actions -->
+                        <div class="d-flex justify-content-center gap-2 mt-3">
+                            <a href="mailto:@Model.Graduate.Email"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-envelope me-1"></i>Email
+                            </a>
+                            <button class="btn btn-outline-success btn-sm"
+                                    onclick="window.print()">
+                                <i class="fas fa-print me-1"></i>Print
+                            </button>
+                            <a 
+                               class="btn btn-outline-warning btn-sm"
+                               onclick="openEditModal('@Model.Graduate.Id')">
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="contact-info">
+                        <h6 class="section-title">Contact Information</h6>
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <small class="text-muted">Email</small>
+                                <div>@Model.Graduate.Email</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <small class="text-muted">Phone</small>
+                                <div>@(Model.Graduate.PhoneNumber ?? "Not provided")</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <small class="text-muted">Location</small>
+                                <div>@(Model.Graduate.Location ?? "Not specified")</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-venus-mars"></i>
+                            <div>
+                                <small class="text-muted">Gender</small>
+                                <div>@(Model.Graduate.Gender ?? "Not specified")</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Information Card -->
+                <div class="card shadow-soft mt-4">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-graduation-cap me-2"></i>Academic Information
+                        </h6>
+                        <div class="academic-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Matric Number:</span>
+                                <span class="detail-value badge bg-primary">@Model.Graduate.MatricNumber</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Graduation Year:</span>
+                                <span class="detail-value">@Model.Graduate.YearOfGraduation</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Department:</span>
+                                <span class="detail-value">@Model.Graduate.DepartmentName</span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Graduate.HighestAcademicQualification))
+                            {
+                                <div class="detail-item">
+                                    <span class="detail-label">Highest Qualification:</span>
+                                    <span class="detail-value">@Model.Graduate.HighestAcademicQualification</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-lg-8">
+                <!-- Employment Information -->
+                <div class="card shadow-soft mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-briefcase me-2"></i>Employment Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <div class="info-icon bg-primary">
+                                        <i class="fas fa-building"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <small class="text-muted">Current Employer</small>
+                                        <h6>@(Model.Graduate.CurrentEmployer ?? "Not specified")</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <div class="info-icon bg-success">
+                                        <i class="fas fa-user-tie"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <small class="text-muted">Job Title</small>
+                                        <h6>@(Model.Graduate.JobTitle ?? "Not specified")</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Employment Status Badge -->
+                        <div class="mt-4">
+                            <span class="badge @GetEmploymentBadgeClass(Model.Graduate.EmploymentStatus) px-3 py-2">
+                                <i class="fas @GetEmploymentIcon(Model.Graduate.EmploymentStatus) me-2"></i>
+                                @GetEmploymentStatusText(Model.Graduate.EmploymentStatus)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Career Timeline (Optional - could be expanded) -->
+                <div class="card shadow-soft mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-line me-2"></i>Career Progress
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <h6>Graduation</h6>
+                                    <small class="text-muted">@Model.Graduate.YearOfGraduation</small>
+                                    <p>Completed studies in @Model.Graduate.DepartmentName</p>
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Graduate.EmploymentStatus))
+                            {
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6>Current Position</h6>
+                                        <small class="text-muted">Present</small>
+                                        <p>@Model.Graduate.JobTitle at @Model.Graduate.CurrentEmployer</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills & Qualifications (Placeholder - can be expanded) -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card shadow-soft h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-certificate me-2"></i>Professional Summary
+                                </h6>
+                                <p class="text-muted">
+                                    @if (!string.IsNullOrEmpty(Model.Graduate.JobTitle) && !string.IsNullOrEmpty(Model.Graduate.CurrentEmployer))
+                                    {
+                                        <text>@Model.Graduate.Name is currently working as a @Model.Graduate.JobTitle at @Model.Graduate.CurrentEmployer.</text>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.Graduate.Location))
+                                    {
+                                        <text> Based in @Model.Graduate.Location.</text>
+                                    }
+                                    @if (string.IsNullOrEmpty(Model.Graduate.EmploymentStatus))
+                                    {
+                                        <text>Employment information is not currently available.</text>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-soft h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-history me-2"></i>Activity Timeline
+                                </h6>
+                                <div class="activity-list">
+                                    <div class="activity-item">
+                                        <i class="fas fa-user-plus activity-icon"></i>
+                                        <div class="activity-content">
+                                            <div class="activity-title">Profile Created</div>
+                                            <div class="activity-time">@FormatDateTime(Model.Graduate.CreatedAt)</div>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <i class="fas fa-sync-alt activity-icon"></i>
+                                        <div class="activity-content">
+                                            <div class="activity-title">Last Updated</div>
+                                            <div class="activity-time">@FormatDateTime(Model.Graduate.UpdatedAt)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between">
+                        
+                        <div>
+                          
+                            <button class="btn btn-sm btn-outline-primary"
+                                    onclick="openEditModal('@Model.Graduate.Id')"
+                                    title="Edit Graduate">
+                                <i class="fas fa-edit"></i>
+                                Edit Profile
+                            </button>
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Graduate Modal -->
+<div class="modal fade" id="graduateModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Add Graduate Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="graduateForm" enctype="multipart/form-data" novalidate>
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <input type="hidden" id="graduateId" name="Id">
+
+                    <div class="row">
+                        <!-- Personal Information -->
+                        <div class="col-md-6 mb-3">
+                            <h6 class="border-bottom pb-2 mb-3">
+                                <i class="fas fa-user me-2"></i>Personal Information
+                            </h6>
+
+                            <div class="mb-3">
+                                <label for="matricNumber" class="form-label required">Matric Number</label>
+                                <input type="text" class="form-control" id="matricNumber"
+                                       name="MatricNumber" placeholder="e.g., CS/2018/001" required>
+                                <div class="invalid-feedback">
+                                    Please enter a valid matric number.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="name" class="form-label required">Full Name</label>
+                                <input type="text" class="form-control" id="name"
+                                       name="Name" placeholder="Enter full name" required>
+                                <div class="invalid-feedback">
+                                    Please enter the graduate's name.
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="email"
+                                           name="Email" placeholder="email@example.com">
+                                    <div class="invalid-feedback">
+                                        Please enter a valid email address.
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phoneNumber"
+                                           name="PhoneNumber" placeholder="+2348012345678">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="gender" class="form-label">Gender</label>
+                                    <select class="form-select" id="gender" name="Gender">
+                                        <option value="">Select gender...</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="highestAcademicQualification" class="form-label">Highest Qualification</label>
+                                    <input type="text" class="form-control" id="highestAcademicQualification"
+                                           name="HighestAcademicQualification" placeholder="e.g., B.Sc Computer Science">
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="passport" class="form-label">Passport Photograph</label>
+                                    <div class="input-group">
+                                        <input type="file"
+                                               class="form-control"
+                                               id="passport"
+                                               name="passport"
+                                               accept="image/png, image/jpeg, image/jpg">
+                                        <button type="button" class="btn btn-outline-secondary" id="clearPassport" style="display: none;">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-text">
+                                        Max file size: 5MB. Supported formats: JPEG, JPG, PNG
+                                    </div>
+                                    <!-- Passport Preview -->
+                                    <div class="mt-2" id="passportPreviewContainer" style="display: none;">
+                                        <img id="passportPreview" class="img-thumbnail" style="max-width: 150px; max-height: 150px;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Academic & Employment Information -->
+                        <div class="col-md-6 mb-3">
+                            <h6 class="border-bottom pb-2 mb-3">
+                                <i class="fas fa-graduation-cap me-2"></i>Academic & Employment
+                            </h6>
+
+                            <div class="mb-3">
+                                <label for="departmentId" class="form-label required">Department</label>
+                                <select class="form-select" id="departmentId" name="DepartmentId" required>
+                                    <option value="">Select department...</option>
+                                    <!-- Departments will be loaded via AJAX -->
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select a department.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="yearOfGraduation" class="form-label required">Graduation Year</label>
+                                <input type="number" class="form-control" id="yearOfGraduation"
+                                       name="YearOfGraduation" min="1900" max="2100"
+                                       value="@DateTime.Now.Year" required>
+                                <div class="invalid-feedback">
+                                    Please enter a valid graduation year.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="employmentStatus" class="form-label">Employment Status</label>
+                                <select class="form-select" id="employmentStatus" name="EmploymentStatus">
+                                    <option value="">Select status...</option>
+                                    <option value="Employed">Employed</option>
+                                    <option value="Unemployed">Unemployed</option>
+                                    <option value="Self-Employed">Self-Employed</option>
+                                    <option value="Further Studies">Further Studies</option>
+                                    <option value="Entrepreneur">Entrepreneur</option>
+                                    <option value="Not Specified">Not Specified</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="currentEmployer" class="form-label">Current Employer</label>
+                                <input type="text" class="form-control" id="currentEmployer"
+                                       name="CurrentEmployer" placeholder="Company name">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="jobTitle" class="form-label">Job Title</label>
+                                    <input type="text" class="form-control" id="jobTitle"
+                                           name="JobTitle" placeholder="e.g., Software Engineer">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="location" class="form-label">Location</label>
+                                    <input type="text" class="form-control" id="location"
+                                           name="Location" placeholder="City, Country">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmit">
+                        <i class="fas fa-save me-2"></i>
+                        <span id="submitText">Save Graduate</span>
+                        <span class="spinner-border spinner-border-sm d-none" id="submitSpinner"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Profile Header */
+    .profile-header {
+        padding: 2rem 0;
+    }
+
+    .profile-card {
+        border-radius: 1rem;
+        padding: 2rem;
+        background: white;
+    }
+
+    /* Profile Photo */
+    .profile-photo-container {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+    }
+
+    .profile-photo {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-initials {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        font-weight: 600;
+        border: 5px solid white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-status {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 3px solid white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        color: white;
+        font-weight: 600;
+    }
+
+    .status-employed {
+        background-color: #2ecc71;
+    }
+
+    .status-unemployed {
+        background-color: #e74c3c;
+    }
+
+    .status-other {
+        background-color: #f39c12;
+    }
+
+    /* Section Titles */
+    .section-title {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #f8f9fa;
+    }
+
+    /* Contact Information */
+    .contact-info {
+        margin-top: 2rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item i {
+            width: 40px;
+            height: 40px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3498db;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+    /* Academic Details */
+    .academic-details {
+        margin-top: 1rem;
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+    .detail-label {
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .detail-value {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    /* Info Cards */
+    .info-card {
+        display: flex;
+        align-items: center;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .info-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .info-content h6 {
+        margin-bottom: 0.25rem;
+        font-weight: 600;
+    }
+
+    /* Employment Badges */
+    .badge-employed {
+        background: linear-gradient(135deg, rgba(46, 204, 113, 0.1) 0%, rgba(46, 204, 113, 0.2) 100%);
+        color: #27ae60;
+        border: 1px solid rgba(46, 204, 113, 0.3);
+    }
+
+    .badge-unemployed {
+        background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.2) 100%);
+        color: #c0392b;
+        border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+
+    .badge-self-employed {
+        background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.2) 100%);
+        color: #2980b9;
+        border: 1px solid rgba(52, 152, 219, 0.3);
+    }
+
+    .badge-other {
+        background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(243, 156, 18, 0.2) 100%);
+        color: #d35400;
+        border: 1px solid rgba(243, 156, 18, 0.3);
+    }
+
+    /* Timeline */
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+        .timeline:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #3498db;
+        }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: -38px;
+        top: 5px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #3498db;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+
+    .timeline-content h6 {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    /* Activity List */
+    .activity-list {
+        margin-top: 1rem;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #3498db;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .activity-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .activity-time {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    /* Card Styling */
+    .card {
+        border: none;
+        border-radius: 1rem;
+    }
+
+    .card-header {
+        background: white;
+        border-bottom: 1px solid #e9ecef;
+        padding: 1.5rem 1.5rem 1rem;
+        border-radius: 1rem 1rem 0 0 !important;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Responsive Adjustments */
+    @@media (max-width: 768px) {
+        .profile-photo-container {
+            width: 120px;
+            height: 120px;
+        }
+
+        .profile-initials {
+            font-size: 2.5rem;
+        }
+
+        .info-item {
+            padding: 0.75rem 0;
+        }
+
+        .detail-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .detail-value {
+            margin-top: 0.25rem;
+        }
+    }
+
+    @@media print {
+        .btn, .no-print {
+            display: none !important;
+        }
+
+        .profile-card, .card {
+            border: 1px solid #dee2e6 !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+
+@section Scripts {
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Delete confirmation
+        function confirmDelete(id, name) {
+            $('#deleteGraduateName').html(`You are about to delete <strong>"${name}"</strong>. This action cannot be undone.`);
+            $('#deleteModal').modal('show');
+
+            $('#btnConfirmDelete').off('click').on('click', function() {
+                deleteGraduate(id);
+            });
+        }
+
+        function deleteGraduate(id) {
+            $('#btnConfirmDelete').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Deleting...');
+
+            // Get anti-forgery token
+            const token = $('input[name="__RequestVerificationToken"]').val();
+
+            $.ajax({
+                url: '@Url.Action("Delete", "GraduateProfile")' + '/' + id,
+                type: 'POST',
+                headers: {
+                    'RequestVerificationToken': token
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#deleteModal').modal('hide');
+                        showToast('Graduate profile deleted successfully!');
+                        window.location.href = '@Url.Action("Index", "GraduateProfile")';
+                    } else {
+                        showError(response.message || 'Failed to delete graduate profile');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showError('Error deleting graduate profile: ' + error);
+                },
+                complete: function() {
+                    $('#btnConfirmDelete').prop('disabled', false).html('<i class="fas fa-trash me-2"></i>Delete Profile');
+                }
+            });
+        }
+
+        function showToast(message) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+
+            Toast.fire({
+                icon: 'success',
+                title: message
+            });
+        }
+
+        function showError(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: message,
+                confirmButtonColor: '#dc3545'
+            });
+        }
+
+        // Passport photo preview and clear functionality
+        $('#passport').change(function() {
+            const file = this.files[0];
+            if (file) {
+                // Validate file type
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                if (!validTypes.includes(file.type)) {
+                    showError('Please upload a valid image file (JPEG, JPG, PNG)');
+                    $(this).val('');
+                    return;
+                }
+
+                // Validate file size (max 5MB)
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (file.size > maxSize) {
+                    showError('Passport photo must be less than 5MB');
+                    $(this).val('');
+                    return;
+                }
+
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#passportPreview').attr('src', e.target.result);
+                    $('#passportPreviewContainer').show();
+                    $('#clearPassport').show();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        $('#clearPassport').click(function() {
+            $('#passport').val('');
+            $('#passportPreview').attr('src', '');
+            $('#passportPreviewContainer').hide();
+            $(this).hide();
+        });
+
+
+        $(document).ready(function() {
+            // Load initial data
+            loadDepartments();
+            initializeEventListeners();
+        });
+
+        function initializeEventListeners() {
+        // Form submission
+             $('#graduateForm').submit(handleFormSubmit);
+        }
+
+
+        // Load departments for dropdowns
+        function loadDepartments() {
+            $.ajax({
+                url: '@Url.Action("GetDepartments", "GraduateProfile")',
+                type: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        departmentsData = response.data;
+
+                        // Populate department dropdowns
+                        populateDepartmentDropdowns();
+                    } else {
+                        showError('Failed to load departments: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showError('Error loading departments: ' + error);
+                }
+            });
+        }
+
+        function populateDepartmentDropdowns() {
+        // Form dropdown
+        const formSelect = $('#departmentId');
+        formSelect.empty();
+        formSelect.append('<option value="">Select department...</option>');
+
+        // Filter dropdown
+        const filterSelect = $('#filterDepartment');
+        filterSelect.empty();
+        filterSelect.append('<option value="">All Departments</option>');
+
+        departmentsData.forEach(dept => {
+            formSelect.append(`<option value="${dept.id}">${dept.title}</option>`);
+            filterSelect.append(`<option value="${dept.id}">${dept.title}</option>`);
+        });
+    }
+
+        function showLoading() {
+            $('#loadingOverlay').show();
+        }
+
+        function hideLoading() {
+            $('#loadingOverlay').hide();
+        }
+        // Show details modal
+        function openEditModal(id) {
+            showLoading();
+            $.ajax({
+                url: '@Url.Action("GetGraduate", "GraduateProfile")' + '/' + id,
+                type: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        const graduate = response.data;
+
+                        $('#modalTitle').text('Edit Graduate Profile');
+                        $('#submitText').text('Update Graduate');
+                        $('#graduateId').val(graduate.id);
+                        $('#matricNumber').val(graduate.matricNumber);
+                        $('#name').val(graduate.name);
+                        $('#email').val(graduate.email);
+                        $('#phoneNumber').val(graduate.phoneNumber);
+                        $('#gender').val(graduate.gender || '');
+                        $('#highestAcademicQualification').val(graduate.highestAcademicQualification || '');
+                        $('#departmentId').val(graduate.DepartmentId);
+                        $('#yearOfGraduation').val(graduate.yearOfGraduation);
+                        $('#employmentStatus').val(graduate.employmentStatus || '');
+                        $('#currentEmployer').val(graduate.currentEmployer || '');
+                        $('#jobTitle').val(graduate.jobTitle || '');
+                        $('#location').val(graduate.location || '');
+
+                        // Show existing passport photo if available
+                        if (graduate.photoUrl) {
+                            $('#passportPreview').attr('src', graduate.photoUrl);
+                            $('#passportPreviewContainer').show();
+                            $('#clearPassport').show();
+                        } else {
+                            $('#passportPreview').attr('src', '');
+                            $('#passportPreviewContainer').hide();
+                            $('#clearPassport').hide();
+                        }
+
+                        // Reset validation
+                        $('#graduateForm').removeClass('was-validated');
+                        $('.invalid-feedback').hide();
+                        $('.is-invalid').removeClass('is-invalid');
+
+                        const modal = new bootstrap.Modal(document.getElementById('graduateModal'));
+                        modal.show();
+                    } else {
+                        showError('Failed to load graduate details: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showError('Error loading graduate: ' + error);
+                },
+                complete: function() {
+                    hideLoading();
+                }
+            });
+        }
+
+         // Confirm delete modal
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const form = $(this)[0];
+            if (!form.checkValidity()) {
+                $(this).addClass('was-validated');
+                return;
+            }
+
+            const graduateId = $('#graduateId').val();
+            const isEdit = !!graduateId;
+            const passportFile = $('#passport')[0].files[0];
+
+            // Create FormData object for file upload
+            const formData = new FormData();
+
+            // Add graduate data
+            formData.append('MatricNumber', $('#matricNumber').val());
+            formData.append('Name', $('#name').val());
+            formData.append('Email', $('#email').val());
+            formData.append('PhoneNumber', $('#phoneNumber').val());
+            formData.append('Gender', $('#gender').val());
+            formData.append('HighestAcademicQualification', $('#highestAcademicQualification').val());
+            formData.append('DepartmentId', $('#departmentId').val());
+            formData.append('YearOfGraduation', parseInt($('#yearOfGraduation').val()));
+            formData.append('EmploymentStatus', $('#employmentStatus').val());
+            formData.append('CurrentEmployer', $('#currentEmployer').val());
+            formData.append('JobTitle', $('#jobTitle').val());
+            formData.append('Location', $('#location').val());
+
+            // Add passport photo if selected
+            if (passportFile) {
+                // Validate file type
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                if (!validTypes.includes(passportFile.type)) {
+                    showError('Please upload a valid image file (JPEG, JPG, PNG)');
+                    return;
+                }
+
+                // Validate file size (max 5MB)
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (passportFile.size > maxSize) {
+                    showError('Passport photo must be less than 5MB');
+                    return;
+                }
+
+                formData.append('PassportPhoto', passportFile);
+
+                // Show preview before upload
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#passportPreview').attr('src', e.target.result).show();
+                };
+                reader.readAsDataURL(passportFile);
+            }
+
+            // Get anti-forgery token
+            const token = $('input[name="__RequestVerificationToken"]').val();
+
+            // Show loading state
+            $('#btnSubmit').prop('disabled', true);
+            $('#submitSpinner').removeClass('d-none');
+
+            // Determine endpoint and method
+            const url = isEdit ? '@Url.Action("Edit", "GraduateProfile")' + '/' + graduateId : '@Url.Action("CreateSingle", "GraduateProfile")';
+            const method = 'POST';
+
+            $.ajax({
+                url: url,
+                type: method,
+                contentType: false, // Important for file upload
+                processData: false, // Important for file upload
+                headers: {
+                    'RequestVerificationToken': token
+                },
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        $('#graduateModal').modal('hide');
+                        showToast(isEdit ? 'Graduate profile updated successfully!' : 'Graduate profile created successfully!');
+
+                        // Refresh the data
+                        loadGraduates();
+
+                        // Reset form
+                        $('#graduateForm')[0].reset();
+                        $('#graduateForm').removeClass('was-validated');
+
+                        // Reset passport preview
+                        $('#passportPreview').hide().attr('src', '');
+                    } else {
+                        // Handle validation errors
+                        if (response.errors && response.errors.length > 0) {
+                            response.errors.forEach(error => {
+                                showError(error);
+                            });
+                        } else {
+                            showError(response.message || 'Operation failed');
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.status === 400 && xhr.responseJSON) {
+                        const errorData = xhr.responseJSON;
+                        if (errorData.errors) {
+                            // Display validation errors
+                            Object.keys(errorData.errors).forEach(field => {
+                                const errorMessages = errorData.errors[field];
+                                errorMessages.forEach(message => {
+                                    showError(`${field}: ${message}`);
+                                });
+                            });
+                        } else {
+                            showError(errorData.message || 'Validation failed');
+                        }
+                    } else {
+                        showError('Error: ' + error);
+                    }
+                },
+                complete: function() {
+                    $('#btnSubmit').prop('disabled', false);
+                    $('#submitSpinner').addClass('d-none');
+                }
+            });
+        }
+
+
+    </script>
+}
+
+@functions {
+    // Helper functions for C# code in view
+    string GetInitials(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return "??";
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2)
+        {
+            return $"{parts[0][0]}{parts[1][0]}".ToUpper();
+        }
+        return parts[0].Length >= 2 ? parts[0].Substring(0, 2).ToUpper() : parts[0].ToUpper();
+    }
+
+    string GetStatusClass(string status)
+    {
+        if (string.IsNullOrEmpty(status)) return "status-other";
+
+        return status.ToLower() switch
+        {
+            "employed" => "status-employed",
+            "unemployed" => "status-unemployed",
+            _ => "status-other"
+        };
+    }
+
+    string GetStatusText(string status)
+    {
+        if (string.IsNullOrEmpty(status)) return "?";
+        return status.Substring(0, 1).ToUpper();
+    }
+
+    string GetEmploymentBadgeClass(string status)
+    {
+        if (string.IsNullOrEmpty(status)) return "badge-secondary";
+
+        return status.ToLower() switch
+        {
+            "employed" => "badge-employed",
+            "unemployed" => "badge-unemployed",
+            "self-employed" or "self employed" => "badge-self-employed",
+            _ => "badge-other"
+        };
+    }
+
+    string GetEmploymentIcon(string status)
+    {
+        if (string.IsNullOrEmpty(status)) return "fa-question-circle";
+
+        return status.ToLower() switch
+        {
+            "employed" => "fa-briefcase",
+            "unemployed" => "fa-user-slash",
+            "self-employed" or "self employed" => "fa-user-tie",
+            "further studies" => "fa-graduation-cap",
+            "entrepreneur" => "fa-lightbulb",
+            _ => "fa-question-circle"
+        };
+    }
+
+    string GetEmploymentStatusText(string status)
+    {
+        if (string.IsNullOrEmpty(status)) return "Employment Status Unknown";
+        return status;
+    }
+
+    string FormatDateTime(string dateString)
+    {
+        if (string.IsNullOrEmpty(dateString)) return "N/A";
+        try
+        {
+            var date = DateTime.Parse(dateString);
+            return date.ToString("MMM dd, yyyy hh:mm tt");
+        }
+        catch
+        {
+            return dateString;
+        }
+    }
+}

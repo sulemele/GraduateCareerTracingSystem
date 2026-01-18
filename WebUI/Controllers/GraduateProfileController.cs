@@ -11,15 +11,18 @@ namespace WebUI.Controllers
 
         private readonly IRepository<GraduateProfile> _repoGraduate;
         private readonly IRepository<Department> _repoDept;
+        private readonly IRepository<Programme> _repoProg;
         private readonly IWebHostEnvironment _environment;
 
         public GraduateProfileController(
             IRepository<GraduateProfile> repoGraduate,
             IRepository<Department> repoDept,
+            IRepository<Programme> repoProg,
             IWebHostEnvironment environment)
         {
             _repoGraduate = repoGraduate;
             _repoDept = repoDept;
+            _repoProg = repoProg;
             _environment = environment;
 
             // Set EPPlus license context
@@ -48,28 +51,40 @@ namespace WebUI.Controllers
             {
                 var graduateList = await _repoGraduate.GetAll();
                 var departmentList = await _repoDept.GetAll();
+                var progs = await _repoProg.GetAll();
 
                 var graduates = graduateList
                     .OrderByDescending(g => g.CreatedAt)
-                    .Select(g => new GraduateProfileDTO
+                    .Select(g =>
                     {
-                        Id = g.Id,
-                        MatricNumber = g.MatricNumber,
-                        DepartmentId = g.DepartmentId,
-                        DepartmentName = departmentList.FirstOrDefault(d => d.Id == g.DepartmentId)?.Title ?? "Unknown",
-                        YearOfGraduation = g.YearOfGraduation,
-                        EmploymentStatus = g.EmploymentStatus,
-                        CurrentEmployer = g.CurrentEmployer,
-                        JobTitle = g.JobTitle,
-                        Location = g.Location,
-                        Name = g.Name,
-                        Email = g.Email,
-                        PhoneNumber = g.PhoneNumber,
-                        Gender = g.Gender,
-                        PhotoUrl = g.PhotoUrl,
-                        HighestAcademicQualification = g.HighestAcademicQualification,
-                        CreatedAt = g.CreatedAt,
-                        UpdatedAt = g.UpdatedAt
+                        var department = departmentList
+                                        .FirstOrDefault(d => d.Id == g.DepartmentId);
+
+                        var programme = progs
+                            .FirstOrDefault(p => p.Id == department?.ProgrammeId);
+                        return new GraduateProfileDTO
+                        {
+                            Id = g.Id,
+                            MatricNumber = g.MatricNumber,
+                            DepartmentId = g.DepartmentId,
+                            DepartmentName = department.Title ?? "Unknown",
+                            ProgrammeId = department.ProgrammeId,
+                            ProgrammeName = programme.Title,
+
+                            YearOfGraduation = g.YearOfGraduation,
+                            EmploymentStatus = g.EmploymentStatus,
+                            CurrentEmployer = g.CurrentEmployer,
+                            JobTitle = g.JobTitle,
+                            Location = g.Location,
+                            Name = g.Name,
+                            Email = g.Email,
+                            PhoneNumber = g.PhoneNumber,
+                            Gender = g.Gender,
+                            PhotoUrl = g.PhotoUrl,
+                            HighestAcademicQualification = g.HighestAcademicQualification,
+                            CreatedAt = g.CreatedAt,
+                            UpdatedAt = g.UpdatedAt
+                        };
                     })
                     .ToList();
 
@@ -307,7 +322,7 @@ namespace WebUI.Controllers
                     UpdatedAt = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
                 };
 
-                 _repoGraduate.Add(graduate);
+                _repoGraduate.Add(graduate);
 
                 return Json(new
                 {
@@ -329,6 +344,11 @@ namespace WebUI.Controllers
             {
                 return Json(new { success = false, message = "Error creating graduate profile: " + ex.Message });
             }
+        }
+
+        public IActionResult Analytics()
+        {
+            return View();
         }
 
         // GET: GraduateProfile/DownloadTemplate
@@ -536,7 +556,7 @@ namespace WebUI.Controllers
                     graduate.PhotoUrl = photoUrl;
                 }
 
-                 _repoGraduate.Update(graduate);
+                _repoGraduate.Update(graduate);
 
                 return Json(new
                 {
@@ -558,6 +578,69 @@ namespace WebUI.Controllers
                 return Json(new { success = false, message = "Error updating graduate profile: " + ex.Message });
             }
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            try
+            {
+                var userEmail = User.Identity.Name;
+
+                // Get graduate by ID
+                var dbGraduate = await _repoGraduate.GetByIdAsync(x => x.Email == userEmail);
+                if (dbGraduate == null)
+                {
+                    return NotFound();
+                }
+
+                // Get department
+                var department = await _repoDept.GetByIdAsync(x => x.Id == dbGraduate.DepartmentId);
+
+                // Get programme (if needed)
+                var programme = department != null ? await _repoProg.GetByIdAsync(x => x.Id == department.ProgrammeId) : null;
+
+                // Map to DTO
+                var graduate = new GraduateProfileDTO
+                {
+                    Id = dbGraduate.Id,
+                    MatricNumber = dbGraduate.MatricNumber,
+                    DepartmentId = dbGraduate.DepartmentId,
+                    DepartmentName = department?.Title ?? "Unknown Department",
+                    YearOfGraduation = dbGraduate.YearOfGraduation,
+                    EmploymentStatus = dbGraduate.EmploymentStatus,
+                    CurrentEmployer = dbGraduate.CurrentEmployer,
+                    JobTitle = dbGraduate.JobTitle,
+                    Location = dbGraduate.Location,
+                    Name = dbGraduate.Name,
+                    Email = dbGraduate.Email,
+                    PhoneNumber = dbGraduate.PhoneNumber,
+                    Gender = dbGraduate.Gender,
+                    PhotoUrl = dbGraduate.PhotoUrl,
+                    HighestAcademicQualification = dbGraduate.HighestAcademicQualification,
+                    CreatedAt = dbGraduate.CreatedAt,
+                    UpdatedAt = dbGraduate.UpdatedAt
+                };
+
+                // Prepare view model
+                var viewModel = new GraduateProfileViewModel
+                {
+                    Graduate = graduate,
+                    Department = department,
+                    Programme = programme,
+                    // You can add more related data here
+                };
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex, "Error loading graduate profile with ID: {Id}", id);
+                return View("Error");
+            }
+        }
+
+
 
         #region Private Methods
 
@@ -608,7 +691,7 @@ namespace WebUI.Controllers
                             var phone = GetCellValue(worksheet, row, 5);
                             var qualification = GetCellValue(worksheet, row, columnMapping.QualificationIndex);
 
-                           
+
 
                             // Validate required fields
                             if (string.IsNullOrWhiteSpace(matricNumber))
@@ -622,7 +705,7 @@ namespace WebUI.Controllers
                                 continue;
                             }
 
-                      
+
 
 
                             if (string.IsNullOrWhiteSpace(name))

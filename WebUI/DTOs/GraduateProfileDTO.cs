@@ -7,6 +7,8 @@ namespace WebUI.DTOs
         public string? Id { get; set; }
         public string MatricNumber { get; set; }
         public string DepartmentId { get; set; }
+        public string ProgrammeId { get; set; }
+        public string ProgrammeName { get; set; }
         public string DepartmentName { get; set; }
         public int YearOfGraduation { get; set; }
 

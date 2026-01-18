@@ -254,6 +254,85 @@
     </div>
 </div>
 
+
+@* CHART BEGIN *@
+<div class="container-fluid mt-4">
+    <div class="row g-4">
+
+       
+
+        <!-- Unemployed -->
+        <div class="col-md-6">
+            <div class="card stat-card stat-card-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-1">Unemployed</h6>
+                            <h3 class="text-white mb-0" id="unemployedCount">0</h3>
+                        </div>
+                        <div class="icon-circle">
+                            <i class="fas fa-briefcase fa-2x text-white-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+
+        <!-- Departments -->
+        <div class="col-md-6">
+            <div class="card stat-card stat-card-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-1">Departments</h6>
+                            <h3 class="text-white mb-0" id="departmentCount">0</h3>
+                        </div>
+                        <div class="icon-circle">
+                            <i class="fas fa-building fa-2x text-white-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-4 mt-2">
+
+        <!-- Graduates by Department -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white fw-semibold">
+                    Graduates by Department
+                </div>
+                <div class="card-body">
+                    <canvas id="departmentChart" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employment Status -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white fw-semibold">
+                    Employment Status
+                </div>
+                <div class="card-body">
+                    <canvas id="employmentChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@* CHART END  *@
+
+
+
 <!-- Add/Edit Graduate Modal -->
 <div class="modal fade" id="graduateModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg">
@@ -754,9 +833,10 @@
         const itemsPerPage = 10;
         let filteredData = [];
         let currentView = 'table'; // 'table' or 'cards'
+        let departmentChartInstance = null;
+        let employmentChartInstance = null;
 
-
-                // Passport photo preview and clear functionality
+        // Passport photo preview and clear functionality
         $('#passport').change(function() {
             const file = this.files[0];
             if (file) {
@@ -799,7 +879,7 @@
             // Load initial data
             loadDepartments();
             loadGraduates();
-
+           
             // Initialize event listeners
             initializeEventListeners();
 
@@ -822,6 +902,10 @@
                     title: message
                 });
             };
+
+            //FOR CHARTS
+            // loadGraduateDashboard();
+        
         });
 
         function initializeEventListeners() {
@@ -859,6 +943,7 @@
                     if (response.success) {
                         graduatesData = response.data;
                         filteredData = [...graduatesData];
+                        updateGraduateDashboard(filteredData);
                         updateStatistics();
                         updateYearFilter();
                         renderGraduates();
@@ -1216,7 +1301,7 @@
             const yearFilter = $('#filterYear').val();
             const employmentFilter = $('#filterEmployment').val();
             const genderFilter = $('#filterGender').val();
-
+           
             filteredData = graduatesData.filter(graduate => {
                 const matchesSearch = !searchTerm ||
                     (graduate.name && graduate.name.toLowerCase().includes(searchTerm)) ||
@@ -1236,6 +1321,9 @@
             currentPage = 1;
             renderGraduates();
             setupPagination();
+
+            // 🔑 UPDATE DASHBOARD FROM FILTERED DATA
+            updateGraduateDashboard(filteredData);
         }
 
         // Clear all filters
@@ -1265,54 +1353,10 @@
             modal.show();
         }
 
-        // Open edit modal
-        // function openEditModal(id) {
-        //     showLoading();
-        //     $.ajax({
-        //         url: '@Url.Action("GetGraduate", "GraduateProfile")' + '/' + id,
-        //         type: 'GET',
-        //         success: function(response) {
-        //             if (response.success) {
-        //                 const graduate = response.data;
-
-        //                 $('#modalTitle').text('Edit Graduate Profile');
-        //                 $('#submitText').text('Update Graduate');
-        //                 $('#graduateId').val(graduate.id);
-        //                 $('#matricNumber').val(graduate.matricNumber);
-        //                 $('#name').val(graduate.name);
-        //                 $('#email').val(graduate.email);
-        //                 $('#phoneNumber').val(graduate.phoneNumber);
-        //                 $('#gender').val(graduate.gender || '');
-        //                 $('#highestAcademicQualification').val(graduate.highestAcademicQualification || '');
-        //                 $('#departmentId').val(graduate.departmentId);
-        //                 $('#yearOfGraduation').val(graduate.yearOfGraduation);
-        //                 $('#employmentStatus').val(graduate.employmentStatus || '');
-        //                 $('#currentEmployer').val(graduate.currentEmployer || '');
-        //                 $('#jobTitle').val(graduate.jobTitle || '');
-        //                 $('#location').val(graduate.location || '');
-
-        //                 // Reset validation
-        //                 $('#graduateForm').removeClass('was-validated');
-        //                 $('.invalid-feedback').hide();
-        //                 $('.is-invalid').removeClass('is-invalid');
-
-        //                 const modal = new bootstrap.Modal(document.getElementById('graduateModal'));
-        //                 modal.show();
-        //             } else {
-        //                 showError('Failed to load graduate details: ' + response.message);
-        //             }
-        //         },
-        //         error: function(xhr, status, error) {
-        //             showError('Error loading graduate: ' + error);
-        //         },
-        //         complete: function() {
-        //             hideLoading();
-        //         }
-        //     });
-        // }
+        
 
         // Show details modal
-                function openEditModal(id) {
+        function openEditModal(id) {
             showLoading();
             $.ajax({
                 url: '@Url.Action("GetGraduate", "GraduateProfile")' + '/' + id,
@@ -1433,100 +1477,7 @@
             }, 300);
         }
 
-        // Handle form submission
-        // function handleFormSubmit(e) {
-        //     e.preventDefault();
-        //     e.stopPropagation();
-
-        //     const form = $(this)[0];
-        //     if (!form.checkValidity()) {
-        //         $(this).addClass('was-validated');
-        //         return;
-        //     }
-
-        //     const graduateId = $('#graduateId').val();
-        //     const isEdit = !!graduateId;
-
-        //     const formData = {
-        //         MatricNumber: $('#matricNumber').val(),
-        //         Name: $('#name').val(),
-        //         Email: $('#email').val(),
-        //         PhoneNumber: $('#phoneNumber').val(),
-        //         Gender: $('#gender').val(),
-        //         HighestAcademicQualification: $('#highestAcademicQualification').val(),
-        //         DepartmentId: $('#departmentId').val(),
-        //         YearOfGraduation: parseInt($('#yearOfGraduation').val()),
-        //         EmploymentStatus: $('#employmentStatus').val(),
-        //         CurrentEmployer: $('#currentEmployer').val(),
-        //         JobTitle: $('#jobTitle').val(),
-        //         Location: $('#location').val()
-        //     };
-
-        //     // Get anti-forgery token
-        //     const token = $('input[name="__RequestVerificationToken"]').val();
-
-        //     // Show loading state
-        //     $('#btnSubmit').prop('disabled', true);
-        //     $('#submitSpinner').removeClass('d-none');
-
-        //     // Determine endpoint and method
-        //     const url = isEdit ? '@Url.Action("Edit", "GraduateProfile")' + '/' + graduateId : '@Url.Action("CreateSingle", "GraduateProfile")';
-        //     const method = 'POST';
-
-        //     $.ajax({
-        //         url: url,
-        //         type: method,
-        //         contentType: 'application/json',
-        //         headers: {
-        //             'RequestVerificationToken': token
-        //         },
-        //         data: JSON.stringify(formData),
-        //         success: function(response) {
-        //             if (response.success) {
-        //                 $('#graduateModal').modal('hide');
-        //                 showToast(isEdit ? 'Graduate profile updated successfully!' : 'Graduate profile created successfully!');
-
-        //                 // Refresh the data
-        //                 loadGraduates();
-
-        //                 // Reset form
-        //                 $('#graduateForm')[0].reset();
-        //                 $('#graduateForm').removeClass('was-validated');
-        //             } else {
-        //                 // Handle validation errors
-        //                 if (response.errors && response.errors.length > 0) {
-        //                     response.errors.forEach(error => {
-        //                         showError(error);
-        //                     });
-        //                 } else {
-        //                     showError(response.message || 'Operation failed');
-        //                 }
-        //             }
-        //         },
-        //         error: function(xhr, status, error) {
-        //             if (xhr.status === 400 && xhr.responseJSON) {
-        //                 const errorData = xhr.responseJSON;
-        //                 if (errorData.errors) {
-        //                     // Display validation errors
-        //                     Object.keys(errorData.errors).forEach(field => {
-        //                         const errorMessages = errorData.errors[field];
-        //                         errorMessages.forEach(message => {
-        //                             showError(`${field}: ${message}`);
-        //                         });
-        //                     });
-        //                 } else {
-        //                     showError(errorData.message || 'Validation failed');
-        //                 }
-        //             } else {
-        //                 showError('Error: ' + error);
-        //             }
-        //         },
-        //         complete: function() {
-        //             $('#btnSubmit').prop('disabled', false);
-        //             $('#submitSpinner').addClass('d-none');
-        //         }
-        //     });
-        // }
+       
 
         // Confirm delete modal
         function handleFormSubmit(e) {
@@ -1764,5 +1715,141 @@
         function hideLoading() {
             $('#loadingOverlay').hide();
         }
+        
+        // function loadGraduateDashboard() {
+        //     $.getJSON('/GraduateProfile/GetGraduates', function (res) {
+        //         if (!res.success) return;
+
+        //         const data = res.data;
+
+        //         // ================== SUMMARY CARDS ==================
+        //         $('#totalGraduates').text(data.length);
+
+        //         const employed = data.filter(x => x.employmentStatus === 'Employed').length;
+        //         const unemployed = data.filter(x => x.employmentStatus === 'Unemployed'|| x.employmentStatus === null).length;
+
+        //         $('#employedCount').text(employed);
+        //         $('#unemployedCount').text(unemployed);
+        //        debugger;
+
+        //         const departments = [...new Set(data.map(x => x.departmentName))];
+        //         $('#departmentCount').text(departments.length);
+
+        //         // ================== DEPARTMENT BAR CHART ==================
+        //         const deptMap = {};
+        //         data.forEach(g => {
+        //             deptMap[g.departmentName] = (deptMap[g.departmentName] || 0) + 1;
+        //         });
+
+        //         new Chart(document.getElementById('departmentChart'), {
+        //             type: 'bar',
+        //             data: {
+        //                 labels: Object.keys(deptMap),
+        //                 datasets: [{
+        //                     label: 'Graduates',
+        //                     data: Object.values(deptMap),
+        //                     backgroundColor: '#0d6efd'
+        //                 }]
+        //             },
+        //             options: {
+        //                 responsive: true,
+        //                 plugins: {
+        //                     legend: { display: false }
+        //                 }
+        //             }
+        //         });
+
+        //         // ================== EMPLOYMENT PIE CHART ==================
+        //         new Chart(document.getElementById('employmentChart'), {
+        //             type: 'pie',
+        //             data: {
+        //                 labels: ['Employed', 'Unemployed'],
+        //                 datasets: [{
+        //                     data: [employed, unemployed],
+        //                     backgroundColor: ['#198754', '#dc3545']
+        //                 }]
+        //             },
+        //             options: {
+        //                 responsive: true
+        //             }
+        //         });
+        //     });
+        // }
+
+        // JUST ADDED FOR BETTER PERFORMANCE
+        function updateGraduateDashboard(data) {
+            debugger;
+            // ================== SUMMARY CARDS ==================
+            $('#totalGraduates').text(data.length);
+
+            const employed = data.filter(x => x.employmentStatus === 'Employed').length;
+            const unemployed = data.filter(
+                x => x.employmentStatus === 'Unemployed' || x.employmentStatus == null
+            ).length;
+
+            $('#employedCount').text(employed);
+            $('#unemployedCount').text(unemployed);
+
+            const departments = [...new Set(data.map(x => x.departmentName))];
+            $('#departmentCount').text(departments.length);
+
+            // ================== DEPARTMENT BAR CHART ==================
+            const deptMap = {};
+            data.forEach(g => {
+                deptMap[g.departmentName] = (deptMap[g.departmentName] || 0) + 1;
+            });
+
+            renderDepartmentChart(deptMap);
+
+            // ================== EMPLOYMENT PIE CHART ==================
+            renderEmploymentChart(employed, unemployed);
+        }
+
+        function renderDepartmentChart(deptMap) {
+            if (departmentChartInstance) {
+                departmentChartInstance.destroy();
+            }
+
+            departmentChartInstance = new Chart(
+                document.getElementById('departmentChart'),
+                {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(deptMap),
+                        datasets: [{
+                            label: 'Graduates',
+                            data: Object.values(deptMap),
+                            backgroundColor: '#0d6efd'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } }
+                    }
+                }
+            );
+        }
+
+        function renderEmploymentChart(employed, unemployed) {
+            if (employmentChartInstance) {
+                employmentChartInstance.destroy();
+            }
+
+            employmentChartInstance = new Chart(
+                document.getElementById('employmentChart'),
+                {
+                    type: 'pie',
+                    data: {
+                        labels: ['Employed', 'Unemployed'],
+                        datasets: [{
+                            data: [employed, unemployed],
+                            backgroundColor: ['#198754', '#dc3545']
+                        }]
+                    },
+                    options: { responsive: true }
+                }
+            );
+        }
+            
     </script>
 }

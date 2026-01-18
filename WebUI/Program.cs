@@ -101,7 +101,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
-app.UseMiddleware<Enforce2FAMiddleware>();
+//app.UseMiddleware<Enforce2FAMiddleware>();
 app.UseAuthorization();
 
 app.MapStaticAssets();

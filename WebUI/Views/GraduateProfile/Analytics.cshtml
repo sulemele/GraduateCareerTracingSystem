@@ -1,0 +1,186 @@
+﻿@{
+    ViewData["Title"] = "Graduate Employment Dashboard";
+    ViewData["analytics"] = "active";
+    ViewData["graduates"] = "";
+}
+
+<div class="container-fluid py-4">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-primary">Graduate Employment Analytics</h4>
+        <span class="text-muted small">Live institutional graduate insights</span>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Graduates</h6>
+                    <h3 class="fw-bold" id="totalGraduates">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Employed</h6>
+                    <h3 class="fw-bold text-success" id="employedCount">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Unemployed</h6>
+                    <h3 class="fw-bold text-danger" id="unemployedCount">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Departments</h6>
+                    <h3 class="fw-bold" id="departmentCount">0</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="row g-4">
+
+        <!-- Employment Pie -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="fw-semibold mb-3">Employment Status</h6>
+                    <canvas id="employmentChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- By Department -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="fw-semibold mb-3">Graduates by Department</h6>
+                    <canvas id="departmentChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- By Programme -->
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="fw-semibold mb-3">Employment by Programme</h6>
+                    <canvas id="programmeChart" height="110"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+    let employmentChart, departmentChart, programmeChart;
+
+    $(document).ready(function () {
+        loadDashboard();
+    });
+
+    function loadDashboard() {
+        $.getJSON('/GraduateProfile/GetGraduates', function (res) {
+            if (!res.success) return;
+
+            const data = res.data;
+
+            $('#totalGraduates').text(data.length);
+
+            const employed = data.filter(x => x.employmentStatus === 'Employed').length;
+            const unemployed = data.filter(x => x.employmentStatus !== 'Employed').length;
+
+            $('#employedCount').text(employed);
+            $('#unemployedCount').text(unemployed);
+
+            const departments = [...new Set(data.map(x => x.departmentName))];
+            $('#departmentCount').text(departments.length);
+
+            renderEmploymentChart(employed, unemployed);
+            renderDepartmentChart(data);
+            renderProgrammeChart(data);
+        });
+    }
+
+    function renderEmploymentChart(employed, unemployed) {
+        if (employmentChart) employmentChart.destroy();
+
+        employmentChart = new Chart($('#employmentChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Employed', 'Unemployed'],
+                datasets: [{
+                    data: [employed, unemployed],
+                    backgroundColor: ['#198754', '#dc3545']
+                }]
+            }
+        });
+    }
+
+    function renderDepartmentChart(data) {
+        if (departmentChart) departmentChart.destroy();
+
+        const map = {};
+        data.forEach(x => map[x.departmentName] = (map[x.departmentName] || 0) + 1);
+
+        departmentChart = new Chart($('#departmentChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(map),
+                datasets: [{
+                    data: Object.values(map),
+                    backgroundColor: '#0d6efd'
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    function renderProgrammeChart(data) {
+        if (programmeChart) programmeChart.destroy();
+
+        const map = {};
+        data.forEach(x => {
+            const prog = x.programmeName?.split(' ')[0] || 'Other';
+     
+
+            map[prog] = (map[prog] || 0) + 1;
+        });
+
+     
+        programmeChart = new Chart($('#programmeChart'), {
+            type: 'line',
+            data: {
+                labels: Object.keys(map),
+                datasets: [{
+                    label: 'Graduates',
+                    data: Object.values(map),
+                    borderColor: '#6610f2',
+                    borderWidth: 2,
+                    tension: 0.35,
+                    fill: false
+                }]
+            }
+        });
+    }
+</script>
+}
