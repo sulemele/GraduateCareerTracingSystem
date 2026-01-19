@@ -1,0 +1,634 @@
+﻿@using static WebUI.Controllers.SocialNetworkController
+@model List<RoomSubjectViewModel>
+@{
+    ViewData["Title"] = "Social Network - Discussion Rooms";
+    var currentUser = User.Identity?.Name ?? "Guest";
+}
+
+<!-- Include SweetAlert and other dependencies -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<style>
+    :root {
+        --primary-color: #4361ee;
+        --primary-dark: #3a56d4;
+        --secondary-color: #7209b7;
+        --light-bg: #f8f9fa;
+        --card-bg: #ffffff;
+        --border-color: #e0e0e0;
+        --text-primary: #333333;
+        --text-secondary: #666666;
+    }
+
+    /* body {
+                background-color: #f5f7fb;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                color: var(--text-primary);
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+            } */
+
+    .header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 2rem 0;
+        border-radius: 0 0 20px 20px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .subject-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: var(--primary-color);
+        }
+
+        .subject-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-color);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .subject-card:hover::before {
+            opacity: 1;
+        }
+
+    .subject-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .subject-description {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+
+    .meta-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .comment-count {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+    }
+
+    .create-btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border: none;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+    }
+
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+        }
+
+    .modal-content {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border-radius: 15px 15px 0 0;
+        padding: 1.5rem;
+    }
+
+    .comment-bubble {
+        background: var(--light-bg);
+        border-radius: 18px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
+        max-width: 80%;
+        position: relative;
+    }
+
+        .comment-bubble.current-user {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            margin-left: auto;
+        }
+
+    .comment-sender {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .comment-text {
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+
+    .comment-time {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    .edit-btn {
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+        cursor: pointer;
+    }
+
+    .comment-bubble.current-user .edit-btn {
+        color: white;
+        opacity: 0.9;
+    }
+
+    .loading-spinner {
+        display: none;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: var(--text-secondary);
+    }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+    .badge {
+        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+</style>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="row align-items-center">
+            <div class="col-md-7 m-3">
+                <h1 class="display-5 fw-bold">Discussion Rooms</h1>
+                <p class="lead mb-0">Join conversations, share ideas, and connect with others</p>
+            </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+
+                <div class="col-md-4 text-end">
+                    <button class="btn create-btn" data-bs-toggle="modal" data-bs-target="#createSubjectModal">
+                        <i class="bi bi-plus-circle me-2"></i>New Discussion
+                    </button>
+                </div>
+            }
+
+        </div>
+    </div>
+
+    <!-- Subjects List -->
+    <div id="subjectsContainer">
+        @if (Model.Any())
+        {
+            foreach (var subject in Model)
+            {
+                <div class="subject-card" data-subject-id="@subject.Id">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="subject-title">@subject.Title</div>
+                            <div class="subject-description">@subject.Description</div>
+                            <div class="meta-info">
+                                <span><i class="bi bi-calendar me-1"></i>@subject.CreatedDate.ToString("MMM dd, yyyy")</span>
+                                <span class="comment-count">
+                                    <i class="bi bi-chat-text me-1"></i>@subject.CommentCount comments
+                                </span>
+                            </div>
+                        </div>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <button class="btn btn-sm btn-outline-primary edit-subject-btn" data-id="@subject.Id" data-title="@subject.Title" data-description="@subject.Description">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-chat-square-text"></i>
+                <h3>No discussions yet</h3>
+                <p class="text-muted">Start the first conversation!</p>
+                <button class="btn create-btn mt-3" data-bs-toggle="modal" data-bs-target="#createSubjectModal">
+                    <i class="bi bi-plus-circle me-2"></i>Create First Discussion
+                </button>
+            </div>
+        }
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<!-- Create Subject Modal -->
+<div class="modal fade" id="createSubjectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Start New Discussion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="createSubjectForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Important:</strong> Discussions cannot be deleted once created. You can only edit them.
+                    </div>
+                    <div class="mb-3">
+                        <label for="subjectTitle" class="form-label">Discussion Title *</label>
+                        <input type="text" class="form-control" id="subjectTitle" name="Title" maxlength="100" required>
+                        <div class="form-text">Be descriptive but concise</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="subjectDescription" class="form-label">Description *</label>
+                        <textarea class="form-control" id="subjectDescription" name="Description" rows="4" maxlength="500" required></textarea>
+                        <div class="form-text">What would you like to discuss?</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Discussion</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Subject Detail Modal -->
+<div class="modal fade" id="subjectDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Discussion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="subjectDetailContent">
+                <!-- Content loaded via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Comment Modal -->
+<div class="modal fade" id="editCommentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Comment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editCommentForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <input type="hidden" id="editCommentId">
+                    <div class="mb-3">
+                        <textarea class="form-control" id="editCommentText" rows="4" maxlength="500" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Subject Modal -->
+<div class="modal fade" id="editSubjectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Discussion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editSubjectForm">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" id="editSubjectId">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editSubjectTitle" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="editSubjectTitle" maxlength="100" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editSubjectDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editSubjectDescription" rows="4" maxlength="500" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function() {
+        const user = '@currentUser';
+
+        // Create Subject with Confirmation
+        $('#createSubjectForm').on('submit', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to delete this discussion once created. You can only edit it.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#4361ee',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, create it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const formData = {
+                        Title: $('#subjectTitle').val(),
+                        Description: $('#subjectDescription').val()
+                    };
+
+                    $.ajax({
+                        url: '@Url.Action("CreateSubject", "SocialNetwork")',
+                        type: 'POST',
+                        data: formData,
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Created!',
+                                    text: 'Discussion has been created successfully.',
+                                    confirmButtonColor: '#4361ee'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Failed to create discussion. Please try again.'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        // Load Subject Detail
+        $('.subject-card').on('click', function(e) {
+            if ($(e.target).hasClass('edit-subject-btn')) return;
+
+            const subjectId = $(this).data('subject-id');
+            $('#loadingSpinner').show();
+
+            $.ajax({
+                url: '@Url.Action("GetSubjectDetail", "SocialNetwork")' + '?id=' + subjectId,
+                type: 'GET',
+                success: function(data) {
+                    $('#subjectDetailContent').html(data);
+                    $('#subjectDetailModal').modal('show');
+                },
+                complete: function() {
+                    $('#loadingSpinner').hide();
+                }
+            });
+        });
+
+        // Add Comment
+        $(document).on('submit', '#addCommentForm', function(e) {
+            e.preventDefault();
+            const subjectId = $(this).data('subject-id');
+            const comment = $('#newComment').val().trim();
+
+            if (!comment) return;
+
+            $.ajax({
+                url: '@Url.Action("AddComment", "SocialNetwork")',
+                type: 'POST',
+                data: {
+                    subjectId: subjectId,
+                    comment: comment
+                },
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        const commentHtml = `
+                            <div class="comment-bubble current-user">
+                                <div class="comment-sender">You</div>
+                                <div class="comment-text">${response.comment}</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="comment-time">Just now</span>
+                                    <button class="btn btn-sm edit-btn edit-comment-btn"
+                                            data-comment-id="${response.commentId || ''}"
+                                            data-comment="${response.comment}">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </div>
+                                <span class="badge">You</span>
+                            </div>`;
+
+                        $('#commentsContainer').append(commentHtml);
+                        $('#newComment').val('');
+
+                        // Update comment count in subject card
+                        const subjectCard = $('.subject-card[data-subject-id="' + subjectId + '"]');
+                        const countBadge = subjectCard.find('.comment-count');
+                        const currentCount = parseInt(countBadge.text().match(/\d+/)[0]);
+                        countBadge.html(`<i class="bi bi-chat-text me-1"></i>${currentCount + 1} comments`);
+                    }
+                }
+            });
+        });
+
+        // Open Edit Comment Modal
+        $(document).on('click', '.edit-comment-btn', function() {
+            const commentId = $(this).data('comment-id');
+            const commentText = $(this).data('comment');
+
+            $('#editCommentId').val(commentId);
+            $('#editCommentText').val(commentText);
+            $('#editCommentModal').modal('show');
+        });
+
+        // Save Edited Comment
+        $('#editCommentForm').on('submit', function(e) {
+            e.preventDefault();
+            const commentId = $('#editCommentId').val();
+            const newComment = $('#editCommentText').val().trim();
+
+            $.ajax({
+                url: '@Url.Action("EditComment", "SocialNetwork")',
+                type: 'POST',
+                data: {
+                    commentId: commentId,
+                    newComment: newComment
+                },
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#editCommentModal').modal('hide');
+                        // Update comment in UI
+                        $('.edit-comment-btn[data-comment-id="' + commentId + '"]')
+                            .closest('.comment-bubble')
+                            .find('.comment-text')
+                            .text(newComment);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Updated!',
+                            text: 'Comment has been updated.',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    }
+                }
+            });
+        });
+
+        // Open Edit Subject Modal
+        $(document).on('click', '.edit-subject-btn', function(e) {
+            e.stopPropagation();
+            const id = $(this).data('id');
+            const title = $(this).data('title');
+            const description = $(this).data('description');
+
+            $('#editSubjectId').val(id);
+            $('#editSubjectTitle').val(title);
+            $('#editSubjectDescription').val(description);
+            $('#editSubjectModal').modal('show');
+        });
+
+        // Save Edited Subject
+        $('#editSubjectForm').on('submit', function(e) {
+            e.preventDefault();
+            const id = $('#editSubjectId').val();
+            const title = $('#editSubjectTitle').val().trim();
+            const description = $('#editSubjectDescription').val().trim();
+
+            $.ajax({
+                url: '@Url.Action("EditSubject", "SocialNetwork")',
+                type: 'POST',
+                data: {
+                    subjectId: id,
+                    title: title,
+                    description: description
+                },
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#editSubjectModal').modal('hide');
+                        // Update subject in UI
+                        const subjectCard = $('.subject-card[data-subject-id="' + id + '"]');
+                        subjectCard.find('.subject-title').text(title);
+                        subjectCard.find('.subject-description').text(description);
+                        subjectCard.find('.edit-subject-btn')
+                            .data('title', title)
+                            .data('description', description);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Updated!',
+                            text: 'Discussion has been updated.',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    }
+                }
+            });
+        });
+
+        // Clear form when modal closes
+        $('.modal').on('hidden.bs.modal', function() {
+            $(this).find('form')[0]?.reset();
+        });
+
+        // Character counters
+        $('#subjectTitle, #editSubjectTitle').on('input', function() {
+            const max = 100;
+            const length = $(this).val().length;
+            $(this).next('.form-text').text(`${length}/${max} characters`);
+        });
+
+        $('#subjectDescription, #editSubjectDescription, #newComment, #editCommentText').on('input', function() {
+            const max = 500;
+            const length = $(this).val().length;
+            const counter = $(this).next('.form-text');
+            if (counter.length) {
+                counter.text(`${length}/${max} characters`);
+            }
+        });
+    });
+</script>

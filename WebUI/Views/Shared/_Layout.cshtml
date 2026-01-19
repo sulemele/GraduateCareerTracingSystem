@@ -94,13 +94,13 @@
             transition: all 0.2s;
         }
 
-        .nav-link:hover, .nav-link.active {
-            color: white !important;
-            background-color: rgba(255,255,255,0.1);
-            border-radius: 6px;
-        }
+            .nav-link:hover, .nav-link.active {
+                color: white !important;
+                background-color: rgba(255,255,255,0.1);
+                border-radius: 6px;
+            }
 
-       
+
 
         .user-avatar {
             width: 40px;
@@ -128,9 +128,9 @@
             z-index: 1020;
         }
 
-        .sidebar.collapsed {
-            margin-left: calc(-1 * var(--sidebar-width));
-        }
+            .sidebar.collapsed {
+                margin-left: calc(-1 * var(--sidebar-width));
+            }
 
         .sidebar-header {
             padding: 1.5rem 1.5rem 1rem;
@@ -159,18 +159,18 @@
             border-left: 4px solid transparent;
         }
 
-        .sidebar-menu-link:hover {
-            background-color: rgba(52, 152, 219, 0.08);
-            color: var(--secondary-color);
-            border-left-color: var(--secondary-color);
-        }
+            .sidebar-menu-link:hover {
+                background-color: rgba(52, 152, 219, 0.08);
+                color: var(--secondary-color);
+                border-left-color: var(--secondary-color);
+            }
 
-        .sidebar-menu-link.active {
-            background-color: rgba(52, 152, 219, 0.12);
-            color: var(--secondary-color);
-            border-left-color: var(--secondary-color);
-            font-weight: 500;
-        }
+            .sidebar-menu-link.active {
+                background-color: rgba(52, 152, 219, 0.12);
+                color: var(--secondary-color);
+                border-left-color: var(--secondary-color);
+                font-weight: 500;
+            }
 
         .sidebar-menu-item.active > .sidebar-menu-link {
             background-color: rgba(52, 152, 219, 0.12);
@@ -197,9 +197,9 @@
             min-height: calc(100vh - var(--header-height));
         }
 
-        .main-content.expanded {
-            margin-left: 0;
-        }
+            .main-content.expanded {
+                margin-left: 0;
+            }
 
         .page-header {
             margin-bottom: 2rem;
@@ -227,9 +227,9 @@
             transition: transform 0.2s;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-        }
+            .card:hover {
+                transform: translateY(-2px);
+            }
 
         .card-header {
             background-color: white;
@@ -279,17 +279,17 @@
                 margin-left: calc(-1 * var(--sidebar-width));
             }
 
-            .sidebar.mobile-show {
-                margin-left: 0;
-            }
+                .sidebar.mobile-show {
+                    margin-left: 0;
+                }
 
             .main-content {
                 margin-left: 0;
             }
 
-            .main-content.mobile-expanded {
-                margin-left: var(--sidebar-width);
-            }
+                .main-content.mobile-expanded {
+                    margin-left: var(--sidebar-width);
+                }
         }
 
         /* Custom Utilities */
@@ -418,7 +418,7 @@
                     </li>
 
                     <!-- Messages -->
-                   @*  <li class="nav-item dropdown">
+                    @*  <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-envelope"></i>
                         </a>
@@ -491,24 +491,29 @@
                     <span>Dashboard</span>
                 </a>
             </li>
-            <li class="sidebar-menu-item">
-                <a class="sidebar-menu-link @ViewData["graduates"]" href="/GraduateProfile/Index">
-                    <i class="fas fa-user-graduate sidebar-menu-icon"></i>
-                    <span>Graduates</span>
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a class="sidebar-menu-link @ViewData["progs"]" asp-controller="Programme" asp-action="Index">
-                    <i class="fas fa-building sidebar-menu-icon"></i>
-                    <span>Programmes</span>
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a class="sidebar-menu-link @ViewData[" depts"]" asp-controller="Department" asp-action="Index">
-                    <i class="fas fa-poll sidebar-menu-icon"></i>
-                    <span>Departments</span>
-                </a>
-            </li>
+            @if (User.IsInRole("Admin"))
+            {
+
+                <li class="sidebar-menu-item">
+                    <a class="sidebar-menu-link @ViewData["graduates"]" href="/GraduateProfile/Index">
+                        <i class="fas fa-user-graduate sidebar-menu-icon"></i>
+                        <span>Graduates</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a class="sidebar-menu-link @ViewData["progs"]" asp-controller="Programme" asp-action="Index">
+                        <i class="fas fa-building sidebar-menu-icon"></i>
+                        <span>Programmes</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a class="sidebar-menu-link @ViewData[" depts"]" asp-controller="Department" asp-action="Index">
+                        <i class="fas fa-poll sidebar-menu-icon"></i>
+                        <span>Departments</span>
+                    </a>
+                </li>
+            }
+
             <li class="sidebar-menu-item">
                 <a class="sidebar-menu-link @ViewData["analytics"]" asp-controller="GraduateProfile" asp-action="Analytics">
                     <i class="fas fa-chart-bar sidebar-menu-icon"></i>
@@ -516,7 +521,7 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a class="sidebar-menu-link" asp-controller="Alumni" asp-action="Index">
+                <a class="sidebar-menu-link" asp-controller="SocialNetwork" asp-action="Index">
                     <i class="fas fa-users sidebar-menu-icon"></i>
                     <span>Alumni Network</span>
                 </a>
