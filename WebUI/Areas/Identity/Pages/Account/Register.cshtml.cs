@@ -154,8 +154,11 @@ namespace WebUI.Areas.Identity.Pages.Account
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    graduateProfile.UserId = user.Id;
-                    repoGradProf.Update(graduateProfile);
+                    if (!string.IsNullOrWhiteSpace(graduateProfile.Name))
+                    {
+                        graduateProfile.UserId = user.Id;
+                        repoGradProf.Update(graduateProfile);
+                    }
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -167,7 +170,7 @@ namespace WebUI.Areas.Identity.Pages.Account
                         return LocalRedirect(returnUrl);
                     }
 
-                   
+
 
                 }
                 foreach (var error in result.Errors)

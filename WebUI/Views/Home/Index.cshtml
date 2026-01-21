@@ -1,9 +1,451 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Graduate Career Tracking System";
     ViewData["dashboard"] = "active";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero Section -->
+<section class="hero-section position-relative overflow-hidden">
+    <div class="container py-5">
+        <div class="row align-items-center min-vh-80">
+            <div class="col-lg-7 mb-5 mb-lg-0">
+                <div class="badge bg-primary bg-gradient rounded-pill px-3 py-2 mb-3 d-inline-block">
+                    <i class="bi bi-award me-2"></i>Research Thesis System
+                </div>
+                <h1 class="display-4 fw-bold mb-4">
+                    Graduate Career Tracking & Social Integration System
+                </h1>
+                <p class="lead mb-4">
+                    A comprehensive model for institutional development and career pathway analytics for <span class="text-primary fw-semibold">Umar Suleiman College of Education, Gashu'a, Yobe State</span>
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="@Url.Action("Analytics", "GraduateProfile")" class="btn btn-primary btn-lg px-4 py-3">
+                        <i class="bi bi-speedometer2 me-2"></i>Go to Analytics
+                    </a>
+                    <a href="#features" class="btn btn-outline-primary btn-lg px-4 py-3">
+                        <i class="bi bi-info-circle me-2"></i>Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-body p-0">
+                        <div class="d-flex align-items-center justify-content-center bg-gradient-primary text-white p-4">
+                            <i class="bi bi-building display-1 me-3"></i>
+                            <div>
+                                <h3 class="mb-0">USCOE</h3>
+                                <p class="mb-0 opacity-75">Gashu'a, Yobe State</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h5 class="fw-bold mb-3">System Highlights</h5>
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+                                    <i class="bi bi-graph-up text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-semibold mb-1">Real-time Analytics</h6>
+                                    <p class="small text-muted mb-0">Comprehensive career pathway tracking</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+                                    <i class="bi bi-people text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-semibold mb-1">Social Integration</h6>
+                                    <p class="small text-muted mb-0">Chatting and mentorship platform</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start">
+                                <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+                                    <i class="bi bi-shield-check text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-semibold mb-1">Secure Platform</h6>
+                                    <p class="small text-muted mb-0">Protected graduate data management</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold mb-3">Thesis Objectives Achieved</h2>
+                <p class="lead text-muted">This system successfully addresses the research objectives through comprehensive implementation</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Objective 1 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                    <div class="card-body p-4">
+                        <div class="bg-primary bg-gradient rounded-3 p-3 mb-4 d-inline-flex">
+                            <i class="bi bi-diagram-3 text-white fs-3"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Departmental Tracking</h4>
+                        <p class="text-muted mb-0">
+                            Comprehensive monitoring of graduates by department with detailed analytics on career progression and academic outcomes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objective 2 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                    <div class="card-body p-4">
+                        <div class="bg-primary bg-gradient rounded-3 p-3 mb-4 d-inline-flex">
+                            <i class="bi bi-building text-white fs-3"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">School/Program Tracking</h4>
+                        <p class="text-muted mb-0">
+                            Advanced tracking by school and specific programmes to analyze educational effectiveness and graduate success rates.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objective 3 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                    <div class="card-body p-4">
+                        <div class="bg-primary bg-gradient rounded-3 p-3 mb-4 d-inline-flex">
+                            <i class="bi bi-briefcase text-white fs-3"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Employment Status Monitoring</h4>
+                        <p class="text-muted mb-0">
+                            Real-time employment status tracking with analytics on employment sectors, job satisfaction, and career growth patterns.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objective 4 -->
+            <div class="col-lg-6 col-md-6">
+                <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                    <div class="card-body p-4">
+                        <div class="bg-primary bg-gradient rounded-3 p-3 mb-4 d-inline-flex">
+                            <i class="bi bi-chat-left-text text-white fs-3"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Social Networking & Chatting</h4>
+                        <p class="text-muted mb-0">
+                            Integrated social platform for graduates to connect, share experiences, and maintain professional relationships.
+                        </p>
+                        <div class="mt-3">
+                            <a href="@Url.Action("Index", "SocialNetwork")" class="btn btn-outline-primary">
+                                <i class="bi bi-arrow-right me-2"></i>Access Social Network
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objective 5 -->
+            <div class="col-lg-6 col-md-6">
+                <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                    <div class="card-body p-4">
+                        <div class="bg-primary bg-gradient rounded-3 p-3 mb-4 d-inline-flex">
+                            <i class="bi bi-person-badge text-white fs-3"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Mentorship Program</h4>
+                        <p class="text-muted mb-0">
+                            Structured mentorship system connecting current students with successful graduates for guidance and career advice.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- System Architecture -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold mb-3">System Architecture</h2>
+                <p class="lead text-muted">Comprehensive model for institutional development and career analytics</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-body p-0">
+                        <div class="row g-0">
+                            <div class="col-lg-6 p-5">
+                                <h3 class="fw-bold mb-4">Key Components</h3>
+                                <div class="d-flex mb-4">
+                                    <div class="flex-shrink-0">
+                                        <div class="bg-primary text-white rounded-circle p-2">
+                                            <i class="bi bi-database fs-5"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h5 class="fw-bold">Graduate Database</h5>
+                                        <p class="text-muted mb-0">Secure storage of graduate information and career progression data.</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-4">
+                                    <div class="flex-shrink-0">
+                                        <div class="bg-primary text-white rounded-circle p-2">
+                                            <i class="bi bi-bar-chart fs-5"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h5 class="fw-bold">Analytics Engine</h5>
+                                        <p class="text-muted mb-0">Advanced analytics for career pathway visualization and institutional development insights.</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <div class="bg-primary text-white rounded-circle p-2">
+                                            <i class="bi bi-shield-check fs-5"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h5 class="fw-bold">Security Framework</h5>
+                                        <p class="text-muted mb-0">Robust security measures to protect sensitive graduate information.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 bg-gradient-primary text-white p-5">
+                                <h3 class="fw-bold mb-4">Benefits to Institution</h3>
+                                <ul class="list-unstyled">
+                                    <li class="mb-3">
+                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                        Enhanced graduate tracking capabilities
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                        Data-driven decision making for curriculum development
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                        Improved graduate employability monitoring
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                        Strengthened alumni network and relationships
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                        Comprehensive career pathway analytics
+                                    </li>
+                                    <li>
+                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                        Secure social integration platform
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Stats -->
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="row g-4">
+            <div class="col-md-4 col-sm-6">
+                <div class="text-center p-4">
+                    <div class="display-4 fw-bold text-primary mb-2" data-count="10">0</div>
+                    <p class="text-muted mb-0">Departments Tracked</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="text-center p-4">
+                    <div class="display-4 fw-bold text-primary mb-2" data-count="1500">0</div>
+                    <p class="text-muted mb-0">Graduates Monitored</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="text-center p-4">
+                    <div class="display-4 fw-bold text-primary mb-2" data-count="80">0</div>
+                    <p class="text-muted mb-0">% Employment Rate</p>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <div class="card border-0 shadow-lg rounded-4 bg-gradient-primary text-white">
+                    <div class="card-body p-5">
+                        <h2 class="display-6 fw-bold mb-4">Ready to Explore the System?</h2>
+                        <p class="lead mb-4 opacity-90">
+                            Access the complete graduate tracking and social integration platform developed for USCOE, Gashu'a.
+                        </p>
+                        <div class="d-flex flex-wrap justify-content-center gap-3">
+                            
+                            <a href="@Url.Action("Index", "SocialNetwork")" class="btn btn-outline-light btn-lg px-5 py-3">
+                                <i class="bi bi-people me-2"></i>Social Network
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Add this CSS to your site.css or in a style tag -->
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%) !important;
+    }
+
+    .hover-shadow {
+        transition: all 0.3s ease;
+    }
+
+        .hover-shadow:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+        }
+
+    .min-vh-80 {
+        min-height: 80vh;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+
+    .text-primary {
+        color: #4361ee !important;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+        border: none;
+    }
+
+    .btn-outline-primary {
+        color: #4361ee;
+        border-color: #4361ee;
+    }
+
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            border-color: #4361ee;
+        }
+
+    .bg-primary {
+        background-color: #4361ee !important;
+    }
+
+    .border-primary {
+        border-color: #4361ee !important;
+    }
+
+    .btn-light {
+        background: rgba(255,255,255,0.9);
+        color: #4361ee;
+    }
+
+        .btn-light:hover {
+            background: white;
+            color: #3a0ca3;
+        }
+
+    .opacity-75 {
+        opacity: 0.75;
+    }
+
+    .opacity-90 {
+        opacity: 0.9;
+    }
+
+    .bg-primary.bg-opacity-10 {
+        background-color: rgba(67, 97, 238, 0.1) !important;
+    }
+
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+</style>
+
+<!-- Add this script for animated counters -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animated counter function
+        function animateCounters() {
+            const counters = document.querySelectorAll('[data-count]');
+            const speed = 200; // The lower the slower
+
+            counters.forEach(counter => {
+                const animate = () => {
+                    const target = +counter.getAttribute('data-count');
+                    const count = +counter.innerText.replace('%', '');
+
+                    const increment = target / speed;
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + increment).toLocaleString() + (counter.innerText.includes('%') ? '%' : '');
+                        setTimeout(animate, 20);
+                    } else {
+                        counter.innerText = target.toLocaleString() + (counter.innerText.includes('%') ? '%' : '');
+                    }
+                }
+
+                // Start animation when element is in viewport
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            animate();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+
+                observer.observe(counter);
+            });
+        }
+
+        // Initialize counters
+        animateCounters();
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    });
+</script>

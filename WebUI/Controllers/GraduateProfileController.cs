@@ -591,7 +591,7 @@ namespace WebUI.Controllers
                 var dbGraduate = await _repoGraduate.GetByIdAsync(x => x.Email == userEmail);
                 if (dbGraduate == null)
                 {
-                    return NotFound();
+                    return RedirectToAction("Index","Home");
                 }
 
                 // Get department
