@@ -249,7 +249,7 @@
                 <!-- Action Buttons -->
                 <div class="mt-4">
                     <div class="d-flex justify-content-between">
-                        
+                        <div id="skillsContainer" class="skills-container"></div>
                         <div>
                           
                             <button class="btn btn-sm btn-outline-primary"
@@ -318,6 +318,11 @@
                                     <label for="phoneNumber" class="form-label">Phone Number</label>
                                     <input type="tel" class="form-control" id="phoneNumber"
                                            name="PhoneNumber" placeholder="+2348012345678">
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="skills" class="form-label">Skills</label>
+                                    <input class="form-control" id="skills"
+                                           name="skills" placeholder="Artist, Woodwork, Technical drawing, Solar Construction and Installation, etc">
                                 </div>
                             </div>
 
@@ -437,6 +442,35 @@
 </div>
 
 <style>
+    .skills-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 12px;
+    }
+
+    .skill-tag {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .skill-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+    .no-skills {
+        color: #6b7280;
+        font-style: italic;
+        padding: 8px;
+    }
+
     /* Profile Header */
     .profile-header {
         padding: 2rem 0;
@@ -946,6 +980,7 @@
                         $('#currentEmployer').val(graduate.currentEmployer || '');
                         $('#jobTitle').val(graduate.jobTitle || '');
                         $('#location').val(graduate.location || '');
+                        $('#skills').val(graduate.skills || '');
 
                         // Show existing passport photo if available
                         if (graduate.photoUrl) {
@@ -1008,6 +1043,7 @@
             formData.append('CurrentEmployer', $('#currentEmployer').val());
             formData.append('JobTitle', $('#jobTitle').val());
             formData.append('Location', $('#location').val());
+            formData.append('Skills', $('#skills').val());
 
             // Add passport photo if selected
             if (passportFile) {
@@ -1105,7 +1141,36 @@
             });
         }
 
+        document.addEventListener('DOMContentLoaded', function() {
+            // Safely get the skills value
+            var skillsValue = '@(Model.Graduate.Skills != null ? Model.Graduate.Skills.Replace("'", "\\'") : "")';
+            formatAndDisplaySkills(skillsValue);
+        });
 
+        function formatAndDisplaySkills(skillsProperty) {
+          const container = document.getElementById('skillsContainer');
+
+          // Clear previous content
+          container.innerHTML = '';
+
+          // Split skills by comma or treat as single skill
+          const skillsArray = skillsProperty ?
+            skillsProperty.split(',').map(skill => skill.trim()).filter(skill => skill) :
+            [];
+
+          if (skillsArray.length === 0) {
+            container.innerHTML = '<div class="no-skills">No skills listed</div>';
+            return;
+          }
+
+          // Create and append skill tags
+          skillsArray.forEach(skill => {
+            const skillTag = document.createElement('div');
+            skillTag.className = 'skill-tag';
+            skillTag.textContent = skill;
+            container.appendChild(skillTag);
+          });
+        }
     </script>
 }
 
@@ -1187,4 +1252,5 @@
             return dateString;
         }
     }
+
 }

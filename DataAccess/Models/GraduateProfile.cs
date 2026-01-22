@@ -15,6 +15,7 @@ namespace DataAccess.Models
         public string? CurrentEmployer { get; set; }
         public string? JobTitle { get; set; }
         public string? Location { get; set; }
+        public string? Skills { get; set; }
 
         //Bio
         public string? Name { get; set; }

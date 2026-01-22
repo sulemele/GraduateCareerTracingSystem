@@ -193,13 +193,14 @@
                         <thead>
                             <tr>
                                 <th width="5%">#</th>
-                                <th width="10%">Matric No.</th>
+                                <th width="5%">Matric No.</th>
                                 <th width="15%">Name</th>
                                 <th width="15%">Department</th>
                                 <th width="8%">Graduation Year</th>
                                 <th width="12%">Employment Status</th>
                                 <th width="15%">Current Employer</th>
-                                <th width="10%">Contact</th>
+                                <th width="10%">Skills</th>
+                                <th width="5%">Contact</th>
                                 <th width="10%">Actions</th>
                             </tr>
                         </thead>
@@ -384,6 +385,11 @@
                                     <label for="phoneNumber" class="form-label">Phone Number</label>
                                     <input type="tel" class="form-control" id="phoneNumber"
                                            name="PhoneNumber" placeholder="+2348012345678">
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="skills" class="form-label">Skills</label>
+                                    <input class="form-control" id="skills"
+                                           name="skills" placeholder="Artist, Woodwork, Technical drawing, Solar Construction and Installation, etc">
                                 </div>
                             </div>
 
@@ -1117,6 +1123,7 @@
                         </td>
                         <td>${employmentBadge}</td>
                         <td>${graduate.currentEmployer || 'N/A'}</td>
+                        <td>${graduate.skills || 'N/A'}</td>
                         <td>
                             ${graduate.phoneNumber ? `<div><i class="fas fa-phone text-muted me-1"></i>${graduate.phoneNumber}</div>` : ''}
                             ${graduate.email ? `<div class="text-truncate" style="max-width: 150px;"><i class="fas fa-envelope text-muted me-1"></i>${graduate.email}</div>` : ''}
@@ -1307,6 +1314,7 @@
                     (graduate.name && graduate.name.toLowerCase().includes(searchTerm)) ||
                     (graduate.matricNumber && graduate.matricNumber.toLowerCase().includes(searchTerm)) ||
                     (graduate.email && graduate.email.toLowerCase().includes(searchTerm)) ||
+                    (graduate.skills && graduate.skills.toLowerCase().includes(searchTerm)) ||
                     (graduate.departmentName && graduate.departmentName.toLowerCase().includes(searchTerm)) ||
                     (graduate.currentEmployer && graduate.currentEmployer.toLowerCase().includes(searchTerm));
 
@@ -1501,6 +1509,7 @@
             formData.append('MatricNumber', $('#matricNumber').val());
             formData.append('Name', $('#name').val());
             formData.append('Email', $('#email').val());
+            formData.append('Skills', $('#skills').val());
             formData.append('PhoneNumber', $('#phoneNumber').val());
             formData.append('Gender', $('#gender').val());
             formData.append('HighestAcademicQualification', $('#highestAcademicQualification').val());

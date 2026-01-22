@@ -11,6 +11,8 @@ namespace WebUI.DTOs
         public string ProgrammeName { get; set; }
         public string DepartmentName { get; set; }
         public int YearOfGraduation { get; set; }
+        public string? Skills { get; set; }
+
 
         public string? EmploymentStatus { get; set; }
         public string? CurrentEmployer { get; set; }
@@ -88,6 +90,7 @@ namespace WebUI.DTOs
 
         [StringLength(200, ErrorMessage = "Location cannot exceed 200 characters")]
         public string? Location { get; set; }
+        public string? Skills { get; set; }
 
         public IFormFile? PassportPhoto { get; set; }
         public bool? RemovePassportPhoto { get; set; }

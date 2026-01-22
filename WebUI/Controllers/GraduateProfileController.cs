@@ -76,6 +76,7 @@ namespace WebUI.Controllers
                             CurrentEmployer = g.CurrentEmployer,
                             JobTitle = g.JobTitle,
                             Location = g.Location,
+                            Skills = g.Skills,
                             Name = g.Name,
                             Email = g.Email,
                             PhoneNumber = g.PhoneNumber,
@@ -439,7 +440,7 @@ namespace WebUI.Controllers
         {
             try
             {
-                var dbGraduate = await _repoGraduate.GetByIdAsync(x => x.Id == id);
+                var dbGraduate = await _repoGraduate.GetByIdAsync(x => x.Id == id || x.MatricNumber == id);
                 if (dbGraduate == null)
                 {
                     return Json(new { success = false, message = "Graduate not found" });
@@ -458,6 +459,7 @@ namespace WebUI.Controllers
                     CurrentEmployer = dbGraduate.CurrentEmployer,
                     JobTitle = dbGraduate.JobTitle,
                     Location = dbGraduate.Location,
+                    Skills = dbGraduate.Skills,
                     Name = dbGraduate.Name,
                     Email = dbGraduate.Email,
                     PhoneNumber = dbGraduate.PhoneNumber,
@@ -534,6 +536,7 @@ namespace WebUI.Controllers
                 graduate.CurrentEmployer = dto.CurrentEmployer;
                 graduate.JobTitle = dto.JobTitle;
                 graduate.Location = dto.Location;
+                graduate.Skills = dto.Skills;
                 graduate.UpdatedAt = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
 
                 // Handle passport photo upload/removal
@@ -612,6 +615,7 @@ namespace WebUI.Controllers
                     CurrentEmployer = dbGraduate.CurrentEmployer,
                     JobTitle = dbGraduate.JobTitle,
                     Location = dbGraduate.Location,
+                    Skills = dbGraduate.Skills,
                     Name = dbGraduate.Name,
                     Email = dbGraduate.Email,
                     PhoneNumber = dbGraduate.PhoneNumber,
